@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Three.js Cube (All-in-One)</title>
+    <style>
+        body { margin: 0; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+        }
+    }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+
+        // 1. Scene
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x111111);
+
+        // Texture Loader (from Step 3)
+        const textureLoader = new THREE.TextureLoader();
+        const crateTexture = textureLoader.load('https://threejs.org/examples/textures/crate.gif');
+
+        // 2. Camera
+        const camera = new THREE.PerspectiveCamera(
+            75, // Field of view
+            window.innerWidth / window.innerHeight, // Aspect ratio
+            0.1,  // Near clipping plane
+            1000  // Far clipping plane
+        );
+        camera.position.z = 5; // Move camera back
+
+        // 3. Renderer
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement); // Add canvas to the page
+
+        // 4. The Mesh (The Cube)
+        const geometry = new THREE.BoxGeometry(1, 1, 1);
+        
+        // Material (from Step 3)
+        // Uses the texture and responds to light.
+        const material = new THREE.MeshStandardMaterial({ map: crateTexture });
+        
+        const cube = new THREE.Mesh(geometry, material);
+        scene.add(cube);
+
+        // --- Lights (from Step 2) ---
+        const ambientLight = new THREE.AmbientLight(0x404040); // Soft white light
+        scene.add(ambientLight);
+
+        const pointLight = new THREE.PointLight(0xffffff, 100);
+        pointLight.position.set(2, 3, 4); // x, y, z
+        scene.add(pointLight);
+        // --- End of Lights ---
+
+        // Handle window resizing
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Animation Loop (from Step 1)
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Spin the cube
+            cube.rotation.x += 0.01;
+            cube.rotation.y += 0.01;
+
+            renderer.render(scene, camera);
+        }
+
+        // Start the animation!
+        animate();
+    </script>
+</body>
+</html>
