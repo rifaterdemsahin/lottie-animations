@@ -116,7 +116,7 @@
                 scene.add(mesh);
                 meshes.push(mesh);
 
-                // Create component name text - attach to mesh so it moves with the object
+                // Create component name text - keep in place, don't move with object
                 const nameGeo = new TextGeometry(component.name, {
                     font: font,
                     size: 0.7,
@@ -130,11 +130,11 @@
                     emissiveIntensity: 0.3
                 });
                 const nameMesh = new THREE.Mesh(nameGeo, nameMat);
-                nameMesh.position.set(0, 2, 0.3); // Relative to parent mesh
-                nameMesh.userData = { component: component, isText: true };
-                mesh.add(nameMesh); // Add as child so it moves with the mesh
+                nameMesh.position.set(component.position.x, component.position.y + 2, component.position.z + 0.3);
+                nameMesh.userData = { component: component, isText: true, initialPosition: component.position.clone() };
+                scene.add(nameMesh); // Add to scene directly, not as child
 
-                // Create skill text for each component - attach to mesh
+                // Create skill text for each component - keep in place
                 component.skills.forEach((skill, skillIndex) => {
                     const skillGeo = new TextGeometry(skill, {
                         font: font,
@@ -150,9 +150,9 @@
                     });
                     const skillMesh = new THREE.Mesh(skillGeo, skillMat);
                     const offsetY = -0.5 - (skillIndex * 0.5);
-                    skillMesh.position.set(0, offsetY, 0.3); // Relative to parent mesh
-                    skillMesh.userData = { component: component, isText: true };
-                    mesh.add(skillMesh); // Add as child so it moves with the mesh
+                    skillMesh.position.set(component.position.x, component.position.y + offsetY, component.position.z + 0.3);
+                    skillMesh.userData = { component: component, isText: true, initialPosition: component.position.clone() };
+                    scene.add(skillMesh); // Add to scene directly, not as child
                 });
             });
 
@@ -274,23 +274,18 @@
                     }
                 });
 
-                // Update text colors as objects converge (text moves with objects since they're children)
-                meshes.forEach((mesh, index) => {
-                    if (index < components.length) {
-                        const component = components[index];
-                        // Update colors of text children
-                        mesh.children.forEach(child => {
-                            if (child.userData.isText) {
-                                const startColor = new THREE.Color(component.color);
-                                const endColor = new THREE.Color(mergedColor);
-                                if (child.material.color) {
-                                    child.material.color.lerpColors(startColor, endColor, easedProgress);
-                                }
-                                if (child.material.emissive) {
-                                    child.material.emissive.lerpColors(startColor, endColor, easedProgress * 0.3);
-                                }
-                            }
-                        });
+                // Update text colors as objects converge (text stays in place, only colors change)
+                scene.children.forEach(child => {
+                    if (child.userData && child.userData.isText && !child.userData.isAnswer) {
+                        const component = child.userData.component;
+                        const startColor = new THREE.Color(component.color);
+                        const endColor = new THREE.Color(mergedColor);
+                        if (child.material.color) {
+                            child.material.color.lerpColors(startColor, endColor, easedProgress);
+                        }
+                        if (child.material.emissive) {
+                            child.material.emissive.lerpColors(startColor, endColor, easedProgress * 0.3);
+                        }
                     }
                 });
 
