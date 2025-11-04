@@ -4,24 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Point Cloud</title>
-    <style>
-        body { margin: 0; }
-        canvas { display: block; }
-        #prompt {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            color: white;
-            font-family: sans-serif;
-            font-size: 20px;
-            background: rgba(0,0,0,0.5);
-            padding: 10px;
-            border-radius: 5px;
-        }
-    </style>
+    <link rel="stylesheet" href="shared/prompt.css">
 </head>
 <body>
-    <div id="prompt">A rotating point cloud.</div>
+    <div class="prompt-container">
+        <p>Create an HTML file that uses three.js to render a rotating point cloud.</p>
+        <textarea id="prompt-textbox" readonly>Create an HTML file that uses three.js to render a rotating point cloud.
+
+1.  Set up the basic HTML structure with a canvas element.
+2.  Import the necessary three.js modules.
+3.  Create a scene, camera, and renderer.
+4.  Create a `BufferGeometry` and populate it with a large number of vertices in a random distribution.
+5.  Create a `PointsMaterial` with a green color and a small size.
+6.  Create a `Points` object with the geometry and material, and add it to the scene.
+7.  Implement an animation loop that rotates the point cloud on its y-axis.
+8.  Add an event listener to handle window resizing.</textarea>
+        <button id="copy-button">Copy Prompt</button>
+    </div>
+
+
+
+
     <script type="importmap">
     {
         "imports": {
@@ -76,5 +79,6 @@
 
         animate();
     </script>
+    <script src="shared/prompt.js"></script>
 </body>
 </html>

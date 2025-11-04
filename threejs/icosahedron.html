@@ -4,24 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Icosahedron</title>
-    <style>
-        body { margin: 0; }
-        canvas { display: block; }
-        #prompt {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            color: white;
-            font-family: sans-serif;
-            font-size: 20px;
-            background: rgba(0,0,0,0.5);
-            padding: 10px;
-            border-radius: 5px;
-        }
-    </style>
+    <link rel="stylesheet" href="shared/prompt.css">
 </head>
 <body>
-    <div id="prompt">A rotating icosahedron with a wireframe material.</div>
+    <div class="prompt-container">
+        <p>Create an HTML file that uses three.js to render a rotating icosahedron with a wireframe material.</p>
+        <textarea id="prompt-textbox" readonly>Create an HTML file that uses three.js to render a rotating icosahedron with a wireframe material.
+
+1.  Set up the basic HTML structure with a canvas element.
+2.  Import the necessary three.js modules.
+3.  Create a scene, camera, and renderer.
+4.  Create an `IcosahedronGeometry`.
+5.  Create a `MeshStandardMaterial` with a cyan color and `wireframe` set to true.
+6.  Create a mesh with the geometry and material, and add it to the scene.
+7.  Add ambient and point lights to the scene.
+8.  Implement an animation loop that rotates the icosahedron on its x and y axes.
+9.  Add an event listener to handle window resizing.</textarea>
+        <button id="copy-button">Copy Prompt</button>
+    </div>
+
+
+
+
     <script type="importmap">
     {
         "imports": {
@@ -69,5 +73,6 @@
 
         animate();
     </script>
+    <script src="shared/prompt.js"></script>
 </body>
 </html>

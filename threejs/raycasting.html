@@ -4,45 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Raycasting</title>
-    <style>
-        body { margin: 0; }
-        canvas { display: block; }
-        .prompt-container {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background: rgba(0,0,0,0.7);
-            padding: 10px;
-            border-radius: 5px;
-            color: white;
-            font-family: sans-serif;
-            width: 300px;
-        }
-        #prompt-textbox {
-            width: 100%;
-            height: 100px;
-            background: #333;
-            color: #eee;
-            border: 1px solid #555;
-            border-radius: 3px;
-        }
-        #copy-button {
-            background: #4CAF50;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 3px;
-            cursor: pointer;
-            margin-top: 5px;
-        }
-    </style>
+    <link rel="stylesheet" href="shared/prompt.css">
 </head>
 <body>
     <div class="prompt-container">
-        <p>An interactive raycasting example where clicking on objects changes their color.</p>
-        <textarea id="prompt-textbox" readonly>An interactive raycasting example where clicking on objects changes their color.</textarea>
+        <p>Create an HTML file that uses three.js to demonstrate raycasting.</p>
+        <textarea id="prompt-textbox" readonly>Create an HTML file that uses three.js to demonstrate raycasting.
+
+1.  Set up the basic HTML structure with a canvas element.
+2.  Import the necessary three.js modules.
+3.  Create a scene, camera, and renderer.
+4.  Create a number of randomly positioned cubes.
+5.  Implement a `Raycaster` that changes the color of a cube when it is clicked.
+6.  Add ambient and point lights to the scene.
+7.  Add an event listener to handle window resizing.</textarea>
         <button id="copy-button">Copy Prompt</button>
     </div>
+
+
+
+
     <script type="importmap">
     {
         "imports": {
@@ -114,10 +95,8 @@
 
         animate();
 
-        document.getElementById('copy-button').addEventListener('click', () => {
-            const textbox = document.getElementById('prompt-textbox');
-            navigator.clipboard.writeText(textbox.value);
-        });
+
     </script>
+    <script src="shared/prompt.js"></script>
 </body>
 </html>

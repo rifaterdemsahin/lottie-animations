@@ -4,24 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>3D Text</title>
+    <link rel="stylesheet" href="shared/prompt.css">
     <style>
         body { margin: 0; }
         canvas { display: block; }
-        #prompt {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            color: white;
-            font-family: sans-serif;
-            font-size: 20px;
-            background: rgba(0,0,0,0.5);
-            padding: 10px;
-            border-radius: 5px;
-        }
     </style>
 </head>
 <body>
-    <div id="prompt">A rotating 3D text that says "Hello three.js!".</div>
+    <div class="prompt-container">
+        <p>Create an HTML file that uses three.js to render a rotating 3D text that says "Hello three.js!".</p>
+        <textarea id="prompt-textbox" readonly>Create an HTML file that uses three.js to render a rotating 3D text that says "Hello three.js!".
+
+1.  Set up the basic HTML structure with a canvas element.
+2.  Import the necessary three.js modules, including `three`, `FontLoader`, and `TextGeometry`.
+3.  Create a scene, camera, and renderer.
+4.  Use `FontLoader` to load a font from a URL.
+5.  Inside the `FontLoader` callback, create a `TextGeometry` with the text "Hello three.js!" and appropriate settings.
+6.  Create a `MeshStandardMaterial` with a red color.
+7.  Create a mesh with the geometry and material, and add it to the scene.
+8.  Add ambient and point lights to the scene.
+9.  Implement an animation loop that rotates the text mesh on its y-axis.
+10. Add an event listener to handle window resizing.</textarea>
+        <button id="copy-button">Copy Prompt</button>
+    </div>
+
+
+    <script src="shared/prompt.js"></script>
     <script type="importmap">
     {
         "imports": {
