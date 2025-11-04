@@ -116,16 +116,20 @@
         });
 
         // Add ambient and point lights
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
         scene.add(ambientLight);
 
-        const pointLight1 = new THREE.PointLight(0xffffff, 1, 100);
+        const pointLight1 = new THREE.PointLight(0xffffff, 1.5, 100);
         pointLight1.position.set(5, 5, 5);
         scene.add(pointLight1);
 
-        const pointLight2 = new THREE.PointLight(0xffffff, 1, 100);
+        const pointLight2 = new THREE.PointLight(0xffffff, 1.5, 100);
         pointLight2.position.set(-5, -5, -5);
         scene.add(pointLight2);
+
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        directionalLight.position.set(0, 10, 0);
+        scene.add(directionalLight);
 
         // Animation variables
         const animationDuration = 5.0; // 5 seconds
@@ -169,11 +173,11 @@
                         easedProgress
                     );
 
-                    // Interpolate color
-                    const currentColor = new THREE.Color(icon.color);
-                    const targetColor = new THREE.Color(mergedColor);
-                    icon.mesh.material.color.lerp(currentColor, targetColor, easedProgress);
-                    icon.mesh.material.emissive.lerp(currentColor, targetColor, easedProgress);
+                    // Interpolate color - lerp from current color to target color
+                    const startColor = new THREE.Color(icon.color);
+                    const endColor = new THREE.Color(mergedColor);
+                    icon.mesh.material.color.lerpColors(startColor, endColor, easedProgress);
+                    icon.mesh.material.emissive.lerpColors(startColor, endColor, easedProgress * 0.3);
 
                     // Slowly rotate icons
                     icon.mesh.rotation.x += 0.01;
