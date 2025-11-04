@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sorting Visualization</title>
+    <link rel="stylesheet" href="shared/prompt.css">
+</head>
+<body>
+    <div class="prompt-container">
+        <p>Create an HTML file that uses three.js to visualize the bubble sort algorithm.</p>
+        <textarea id="prompt-textbox" readonly>Create an HTML file that uses three.js to visualize the bubble sort algorithm.
+
+1.  Set up the basic HTML structure with a canvas element.
+2.  Import the necessary three.js modules.
+3.  Create a scene, camera, and renderer.
+4.  Create a set of bars with random heights.
+5.  Implement the bubble sort algorithm in the animation loop to sort the bars.
+6.  Add ambient and point lights to the scene.
+7.  Add an event listener to handle window resizing.</textarea>
+        <button id="copy-button">Copy Prompt</button>
+    </div>
+
+
+
+
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+        }
+    }
+    </script>
+    <script type="module">
+        import * as THREE from 'three';
+
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x111111);
+
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 10;
+
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        const n = 20;
+        const heights = [];
+        const bars = [];
+        for (let i = 0; i < n; i++) {
+            heights.push(Math.random() * 5 + 1);
+            const geometry = new THREE.BoxGeometry(0.4, heights[i], 0.4);
+            const material = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
+            const bar = new THREE.Mesh(geometry, material);
+            bar.position.x = i - n / 2;
+            scene.add(bar);
+            bars.push(bar);
+        }
+
+        const ambientLight = new THREE.AmbientLight(0x404040);
+        scene.add(ambientLight);
+
+        const pointLight = new THREE.PointLight(0xffffff, 100);
+        pointLight.position.set(2, 3, 4);
+        scene.add(pointLight);
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        let i = 0;
+        let j = 0;
+        function animate() {
+            requestAnimationFrame(animate);
+
+            if (i < n) {
+                if (j < n - i - 1) {
+                    if (heights[j] > heights[j + 1]) {
+                        [heights[j], heights[j + 1]] = [heights[j + 1], heights[j]];
+
+                        const tempPos = bars[j].position.x;
+                        bars[j].position.x = bars[j + 1].position.x;
+                        bars[j + 1].position.x = tempPos;
+
+                        [bars[j], bars[j + 1]] = [bars[j + 1], bars[j]];
+                    }
+                    j++;
+                } else {
+                    j = 0;
+                    i++;
+                }
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+
+    </script>
+    <script src="shared/prompt.js"></script>
+</body>
+</html>

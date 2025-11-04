@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flowing Ribbon</title>
+    <link rel="stylesheet" href="shared/prompt.css">
+</head>
+<body>
+    <div class="prompt-container">
+        <p>Create an HTML file that uses three.js to render a flowing ribbon animation.</p>
+        <textarea id="prompt-textbox" readonly>Create an HTML file that uses three.js to render a flowing ribbon animation.
+
+1.  Set up the basic HTML structure with a canvas element.
+2.  Import the necessary three.js modules.
+3.  Create a scene, camera, and renderer.
+4.  Create a `BufferGeometry` and define a set of vertices to form a ribbon shape.
+5.  Add colors to the vertices to create a gradient effect.
+6.  Create a `LineBasicMaterial` with `vertexColors` enabled.
+7.  Create a `Line` object with the geometry and material, and add it to the scene.
+8.  Implement an animation loop that updates the vertex positions to create a flowing effect.
+9.  Add an event listener to handle window resizing.</textarea>
+        <button id="copy-button">Copy Prompt</button>
+    </div>
+
+
+
+
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+        }
+    }
+    </script>
+    <script type="module">
+        import * as THREE from 'three';
+
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x111111);
+
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 10;
+
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        const geometry = new THREE.BufferGeometry();
+        const vertices = new Float32Array(300 * 3);
+        const colors = new Float32Array(300 * 3);
+
+        for (let i = 0; i < 300; i++) {
+            const x = (i - 150) / 10;
+            const y = Math.sin(i / 10) * Math.cos(i / 20);
+            const z = Math.sin(i / 10) * Math.sin(i / 20);
+            vertices[i * 3] = x;
+            vertices[i * 3 + 1] = y;
+            vertices[i * 3 + 2] = z;
+
+            const r = Math.sin(i / 10) * 0.5 + 0.5;
+            const g = Math.cos(i / 10) * 0.5 + 0.5;
+            const b = 1.0;
+            colors[i * 3] = r;
+            colors[i * 3 + 1] = g;
+            colors[i * 3 + 2] = b;
+        }
+
+        geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+        geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+        const material = new THREE.LineBasicMaterial({ vertexColors: true });
+        const ribbon = new THREE.Line(geometry, material);
+        scene.add(ribbon);
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        let t = 0;
+        function animate() {
+            requestAnimationFrame(animate);
+
+            const positions = geometry.attributes.position.array;
+            for (let i = 0; i < positions.length; i += 3) {
+                positions[i + 1] = Math.sin((i / 3 + t) / 10) * Math.cos((i / 3 + t) / 20);
+                positions[i + 2] = Math.sin((i / 3 + t) / 10) * Math.sin((i / 3 + t) / 20);
+            }
+            geometry.attributes.position.needsUpdate = true;
+            t++;
+
+            renderer.render(scene, camera);
+        }
+
+        animate();
+    </script>    <script src="shared/prompt.js"></script>
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fractal Generation</title>
+    <link rel="stylesheet" href="shared/prompt.css">
+</head>
+<body>
+    <div class="prompt-container">
+        <p>Create an HTML file that uses three.js to generate a Mandelbrot set fractal.</p>
+        <textarea id="prompt-textbox" readonly>Create an HTML file that uses three.js to generate a Mandelbrot set fractal.
+
+1.  Set up the basic HTML structure with a canvas element.
+2.  Import the necessary three.js modules.
+3.  Create a scene and an orthographic camera.
+4.  Create a `ShaderMaterial` with a fragment shader that calculates the Mandelbrot set.
+5.  Create a plane and apply the shader material to it.
+6.  Add a `resize` event listener to update the shader's resolution uniform.
+7.  Implement an animation loop to render the scene.</textarea>
+        <button id="copy-button">Copy Prompt</button>
+    </div>
+
+
+
+
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+        }
+    }
+    </script>
+    <script type="module">
+        import * as THREE from 'three';
+
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x000000);
+
+        const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        const planeGeometry = new THREE.PlaneGeometry(2, 2);
+        const material = new THREE.ShaderMaterial({
+            uniforms: {
+                zoom: { value: 1.0 },
+                pan: { value: new THREE.Vector2(0, 0) },
+                resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) }
+            },
+            vertexShader: `
+                void main() {
+                    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                }
+            `,
+            fragmentShader: `
+                uniform float zoom;
+                uniform vec2 pan;
+                uniform vec2 resolution;
+
+                void main() {
+                    vec2 c = (gl_FragCoord.xy / resolution) * 4.0 - 2.0;
+                    c.x *= resolution.x / resolution.y;
+                    c = (c - pan) / zoom;
+
+                    vec2 z = vec2(0.0);
+                    int i;
+                    for (i = 0; i < 256; i++) {
+                        float x = (z.x * z.x - z.y * z.y) + c.x;
+                        float y = (2.0 * z.x * z.y) + c.y;
+                        if ((x * x + y * y) > 4.0) break;
+                        z.x = x;
+                        z.y = y;
+                    }
+
+                    float color = float(i) / 256.0;
+                    gl_FragColor = vec4(color, color, color, 1.0);
+                }
+            `
+        });
+        const plane = new THREE.Mesh(planeGeometry, material);
+        scene.add(plane);
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            material.uniforms.resolution.value.set(window.innerWidth, window.innerHeight);
+        });
+
+        function animate() {
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+
+    </script>
+    <script src="shared/prompt.js"></script>
+</body>
+</html>
