@@ -28,8 +28,11 @@ When creating new animations for this project:
    - Include proper lighting (ambient + point lights)
    - Make animations responsive and performant
    - Add clear comments explaining key concepts
+   - **Text Guidelines**: Make text bigger and bold. When objects converge, attach text as children to the mesh so text moves with objects, not independently
+   - **Always Commit & Push**: After creating any animation, always commit and push to repository
 
 ## Recent Additions
 
 - **colorful_convergence.html**: Colorful icons converging to center over 5 seconds, colors merging into one unified color
+- **skill_merge_answer.html**: ChatGPT, CV, and Job Description components converge over 6 seconds, text attached to objects, final answer displayed
 

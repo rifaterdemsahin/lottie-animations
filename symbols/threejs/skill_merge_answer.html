@@ -83,7 +83,6 @@
         ];
 
         const meshes = [];
-        const skillTexts = [];
         let font = null;
         let answerText = [];
 
@@ -117,45 +116,47 @@
                 scene.add(mesh);
                 meshes.push(mesh);
 
-                // Create component name text
+                // Create component name text - attach to mesh so it moves with the object
                 const nameGeo = new TextGeometry(component.name, {
                     font: font,
-                    size: 0.4,
-                    height: 0.1,
+                    size: 0.7,
+                    height: 0.15,
                     curveSegments: 12
                 });
                 nameGeo.center();
-                const nameMat = new THREE.MeshStandardMaterial({ color: 0xffffff });
+                const nameMat = new THREE.MeshStandardMaterial({ 
+                    color: 0xffffff,
+                    emissive: 0xffffff,
+                    emissiveIntensity: 0.3
+                });
                 const nameMesh = new THREE.Mesh(nameGeo, nameMat);
-                nameMesh.position.set(component.position.x, component.position.y + 1.5, component.position.z + 0.3);
-                nameMesh.userData = { component: component };
-                scene.add(nameMesh);
-                skillTexts.push(nameMesh);
+                nameMesh.position.set(0, 2, 0.3); // Relative to parent mesh
+                nameMesh.userData = { component: component, isText: true };
+                mesh.add(nameMesh); // Add as child so it moves with the mesh
 
-                // Create skill text for each component
+                // Create skill text for each component - attach to mesh
                 component.skills.forEach((skill, skillIndex) => {
                     const skillGeo = new TextGeometry(skill, {
                         font: font,
-                        size: 0.25,
-                        height: 0.05,
-                        curveSegments: 8
+                        size: 0.4,
+                        height: 0.08,
+                        curveSegments: 10
                     });
                     skillGeo.center();
                     const skillMat = new THREE.MeshStandardMaterial({ 
                         color: component.color,
                         emissive: component.color,
-                        emissiveIntensity: 0.5
+                        emissiveIntensity: 0.6
                     });
                     const skillMesh = new THREE.Mesh(skillGeo, skillMat);
-                    const offsetY = -0.5 - (skillIndex * 0.4);
-                    skillMesh.position.set(component.position.x, component.position.y + offsetY, component.position.z + 0.3);
-                    skillMesh.userData = { component: component };
-                    scene.add(skillMesh);
-                    skillTexts.push(skillMesh);
+                    const offsetY = -0.5 - (skillIndex * 0.5);
+                    skillMesh.position.set(0, offsetY, 0.3); // Relative to parent mesh
+                    skillMesh.userData = { component: component, isText: true };
+                    mesh.add(skillMesh); // Add as child so it moves with the mesh
                 });
             });
 
-            // Create final answer text (initially hidden)
+            // Create final answer text (initially hidden) - make it bigger and bold
             const answerLines = [
                 'Customized',
                 'Cover Letter',
@@ -165,18 +166,18 @@
             answerLines.forEach((line, index) => {
                 const answerGeo = new TextGeometry(line, {
                     font: font,
-                    size: 0.5,
-                    height: 0.12,
+                    size: 0.8,
+                    height: 0.2,
                     curveSegments: 12
                 });
                 answerGeo.center();
                 const answerMat = new THREE.MeshStandardMaterial({ 
                     color: 0xffffff,
                     emissive: 0x00ff88,
-                    emissiveIntensity: 0.6
+                    emissiveIntensity: 0.8
                 });
                 const answerMesh = new THREE.Mesh(answerGeo, answerMat);
-                answerMesh.position.set(0, -1.5 + (index * 0.7), 0);
+                answerMesh.position.set(0, -2 + (index * 1), 0);
                 answerMesh.scale.set(0, 0, 0);
                 answerMesh.visible = false;
                 answerMesh.userData.isAnswer = true;
@@ -273,34 +274,23 @@
                     }
                 });
 
-                // Update skill text positions and colors
-                skillTexts.forEach(textMesh => {
-                    if (textMesh.userData.component) {
-                        const component = textMesh.userData.component;
-                        const componentMesh = meshes[components.indexOf(component)];
-                        
-                        // Update position relative to component
-                        if (textMesh.geometry.parameters.text === component.name) {
-                            textMesh.position.lerpVectors(
-                                new THREE.Vector3(component.position.x, component.position.y + 1.5, component.position.z + 0.3),
-                                new THREE.Vector3(0, 2, 0),
-                                easedProgress
-                            );
-                        } else {
-                            // Skill text - fade out and move toward center
-                            textMesh.position.lerpVectors(
-                                textMesh.position.clone(),
-                                new THREE.Vector3(0, 0, 0),
-                                easedProgress * 0.5
-                            );
-                            textMesh.material.opacity = 1 - easedProgress;
-                            textMesh.material.transparent = true;
-                        }
-
-                        // Update color
-                        const startColor = new THREE.Color(component.color);
-                        const endColor = new THREE.Color(mergedColor);
-                        textMesh.material.color.lerpColors(startColor, endColor, easedProgress);
+                // Update text colors as objects converge (text moves with objects since they're children)
+                meshes.forEach((mesh, index) => {
+                    if (index < components.length) {
+                        const component = components[index];
+                        // Update colors of text children
+                        mesh.children.forEach(child => {
+                            if (child.userData.isText) {
+                                const startColor = new THREE.Color(component.color);
+                                const endColor = new THREE.Color(mergedColor);
+                                if (child.material.color) {
+                                    child.material.color.lerpColors(startColor, endColor, easedProgress);
+                                }
+                                if (child.material.emissive) {
+                                    child.material.emissive.lerpColors(startColor, endColor, easedProgress * 0.3);
+                                }
+                            }
+                        });
                     }
                 });
 
