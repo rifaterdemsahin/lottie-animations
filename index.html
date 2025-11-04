@@ -246,6 +246,113 @@
             }
         }
         
+        .ranking-indicator {
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+            color: white;
+            z-index: 15;
+            animation: ranking-pulse 2s infinite;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .ranking-1 {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            border: 3px solid #FFD700;
+        }
+        
+        .ranking-2 {
+            background: linear-gradient(135deg, #C0C0C0, #A9A9A9);
+            border: 3px solid #C0C0C0;
+        }
+        
+        .ranking-3 {
+            background: linear-gradient(135deg, #CD7F32, #B8860B);
+            border: 3px solid #CD7F32;
+        }
+        
+        @keyframes ranking-pulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            }
+            50% {
+                transform: scale(1.1);
+                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+            }
+        }
+        
+        .latest-animations {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .latest-animations h2 {
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 1.8em;
+        }
+        
+        .latest-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+        }
+        
+        .latest-item {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        
+        .latest-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-color: #667eea;
+        }
+        
+        .latest-rank {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            font-size: 18px;
+        }
+        
+        .latest-info h4 {
+            margin: 0 0 5px 0;
+            color: #333;
+            font-size: 1.1em;
+        }
+        
+        .latest-info p {
+            margin: 0;
+            color: #666;
+            font-size: 0.9em;
+        }
+        
         .card-actions {
             display: flex;
             gap: 10px;
@@ -493,6 +600,34 @@
             </div>
         </div>
         
+        <!-- Latest Animations Quick Navigation -->
+        <div class="latest-animations">
+            <h2>🏆 Latest 3 Animations</h2>
+            <div class="latest-list">
+                <div class="latest-item" onclick="scrollToAnimation('skill-merge-answer')">
+                    <div class="latest-rank ranking-1">1</div>
+                    <div class="latest-info">
+                        <h4>✨ Skill Merge Answer</h4>
+                        <p>Created: Nov 4, 2025 19:30</p>
+                    </div>
+                </div>
+                <div class="latest-item" onclick="scrollToAnimation('gemini-image-markdown')">
+                    <div class="latest-rank ranking-2">2</div>
+                    <div class="latest-info">
+                        <h4>🧠 Gemini Image to Markdown</h4>
+                        <p>Created: Nov 4, 2025 19:15</p>
+                    </div>
+                </div>
+                <div class="latest-item" onclick="scrollToAnimation('colorful-convergence')">
+                    <div class="latest-rank ranking-3">3</div>
+                    <div class="latest-info">
+                        <h4>🎨 Colorful Convergence</h4>
+                        <p>Created: Nov 4, 2025 19:14</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
         <div class="github-info">
             <h3>📍 Live Demo</h3>
             <div class="github-url">
@@ -569,7 +704,8 @@
                     </div>
                 </div>
                 
-                <div class="animation-card">
+                <div class="animation-card" id="gemini-image-markdown">
+                    <div class="ranking-indicator ranking-2">2</div>
                     <div class="new-indicator">⭐</div>
                     <div class="badge-container">
                         <span class="badge badge-ai">AI</span>
@@ -815,7 +951,8 @@
                         </div>
                     </div>
                     
-                    <div class="animation-card">
+                    <div class="animation-card" id="colorful-convergence">
+                        <div class="ranking-indicator ranking-3">3</div>
                         <div class="badge-container">
                             <span class="badge badge-threejs">Three.js</span>
                         </div>
@@ -827,7 +964,8 @@
                         </div>
                     </div>
                     
-                    <div class="animation-card">
+                    <div class="animation-card" id="skill-merge-answer">
+                        <div class="ranking-indicator ranking-1">1</div>
                         <div class="badge-container">
                             <span class="badge badge-threejs">Three.js</span>
                             <span class="badge badge-ai">AI Generated</span>
@@ -1186,6 +1324,27 @@
         
         // Update every minute to check for animations that are no longer "new"
         setInterval(markNewAnimations, 60000);
+        
+        // Scroll to animation function
+        function scrollToAnimation(animationId) {
+            const element = document.getElementById(animationId);
+            if (element) {
+                element.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center' 
+                });
+                
+                // Add a temporary highlight effect
+                element.style.transition = 'all 0.3s ease';
+                element.style.transform = 'scale(1.02)';
+                element.style.boxShadow = '0 10px 30px rgba(102, 126, 234, 0.3)';
+                
+                setTimeout(() => {
+                    element.style.transform = 'scale(1)';
+                    element.style.boxShadow = '';
+                }, 1000);
+            }
+        }
     </script>
 </body>
 </html>
