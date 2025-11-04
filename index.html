@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lottie Animations - AI Generated Animations</title>
+    <title>Animation Showcase - Lottie & Three.js</title>
     <style>
         * {
             margin: 0;
@@ -12,238 +12,879 @@
         }
         
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            background-attachment: fixed;
             min-height: 100vh;
             padding: 20px;
             color: #333;
         }
         
         .container {
-            max-width: 800px;
+            max-width: 1400px;
             margin: 0 auto;
-            background: white;
-            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 30px;
             padding: 40px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            box-shadow: 0 20px 80px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
         }
         
         .header {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 50px;
+            padding-bottom: 30px;
+            border-bottom: 3px solid transparent;
+            border-image: linear-gradient(90deg, #667eea, #764ba2, #f093fb) 1;
         }
         
         h1 {
-            color: #333;
-            font-size: 2.5em;
-            margin-bottom: 10px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-size: 3.5em;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            animation: fadeInDown 0.8s ease;
         }
         
         .subtitle {
             color: #666;
-            font-size: 1.2em;
+            font-size: 1.3em;
             margin-bottom: 20px;
+            animation: fadeIn 1s ease;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            animation: fadeInUp 0.8s ease;
+        }
+        
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+        
+        .section {
+            margin: 50px 0;
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #e9ecef;
+        }
+        
+        .section-icon {
+            font-size: 2.5em;
+        }
+        
+        .section h2 {
+            color: #333;
+            font-size: 2.2em;
+            margin: 0;
+        }
+        
+        .section-description {
+            color: #666;
+            margin-top: 10px;
+            font-size: 1.1em;
+        }
+        
+        .animation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .animation-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            border: 2px solid #e9ecef;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .animation-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+        
+        .animation-card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .animation-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: #667eea;
+            box-shadow: 0 12px 40px rgba(102, 126, 234, 0.3);
+        }
+        
+        .animation-card h3 {
+            color: #333;
+            margin-bottom: 12px;
+            font-size: 1.4em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .animation-icon {
+            font-size: 1.3em;
+        }
+        
+        .animation-card p {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.6;
+            font-size: 0.95em;
+        }
+        
+        .badge-container {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.75em;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .badge-lottie {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+        
+        .badge-threejs {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+        
+        .badge-interactive {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+        }
+        
+        .badge-ai {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: white;
+        }
+        
+        .card-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 12px 20px;
+            border-radius: 10px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+        
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+        
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
         }
         
         .github-info {
-            background: #f8f9fa;
-            border-left: 4px solid #667eea;
-            padding: 15px 20px;
-            margin: 20px 0;
-            border-radius: 0 10px 10px 0;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-left: 5px solid #667eea;
+            padding: 20px 25px;
+            margin: 30px 0;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
         
         .github-info h3 {
             color: #333;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
+            font-size: 1.3em;
         }
         
         .github-url {
             font-family: 'Courier New', monospace;
-            background: #e9ecef;
-            padding: 8px 12px;
-            border-radius: 5px;
+            background: white;
+            padding: 10px 15px;
+            border-radius: 8px;
             display: inline-block;
-            margin: 5px 0;
+            margin: 8px 0;
             word-break: break-all;
+            border: 1px solid #e9ecef;
         }
         
         .github-url a {
-            color: #0066cc;
+            color: #667eea;
             text-decoration: none;
+            font-weight: 600;
         }
         
         .github-url a:hover {
             text-decoration: underline;
         }
         
-        .section {
-            margin: 30px 0;
-        }
-        
-        .section h2 {
-            color: #333;
-            border-bottom: 2px solid #667eea;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-        }
-        
-        .file-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-        
-        .file-card {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 20px;
-            border: 2px solid #e9ecef;
-            transition: all 0.3s ease;
-        }
-        
-        .file-card:hover {
-            border-color: #667eea;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-        
-        .file-card h3 {
-            color: #333;
-            margin-bottom: 10px;
-            font-size: 1.2em;
-        }
-        
-        .file-card p {
-            color: #666;
-            margin-bottom: 15px;
-            line-height: 1.5;
-        }
-        
-        .file-link {
-            display: inline-block;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
-            text-decoration: none;
-            transition: transform 0.2s ease;
-        }
-        
-        .file-link:hover {
-            transform: scale(1.05);
-        }
-        
-        .demo-link {
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-        }
-        
-        .source-link {
-            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
-            margin-left: 10px;
-        }
-        
         .footer {
             text-align: center;
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 1px solid #e9ecef;
+            margin-top: 60px;
+            padding-top: 30px;
+            border-top: 2px solid #e9ecef;
             color: #666;
         }
         
-        .badge {
-            display: inline-block;
-            background: #667eea;
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .tech-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 30px;
+            justify-content: center;
+        }
+        
+        .tech-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 0.8em;
-            margin-left: 10px;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .animation-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats {
+                gap: 15px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>🎨 Lottie Animations</h1>
-            <p class="subtitle">Create beautiful animations using AI</p>
+            <h1>🎨 Animation Showcase</h1>
+            <p class="subtitle">Explore beautiful animations created with Lottie.js and Three.js</p>
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-number">7</div>
+                    <div class="stat-label">Lottie Animations</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">30</div>
+                    <div class="stat-label">Three.js Animations</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">37</div>
+                    <div class="stat-label">Total Animations</div>
+                </div>
+            </div>
         </div>
         
         <div class="github-info">
-            <h3>📍 GitHub Pages URL:</h3>
+            <h3>📍 Live Demo</h3>
             <div class="github-url">
                 <a href="https://rifaterdemsahin.github.io/lottie-animations/" target="_blank">
                     https://rifaterdemsahin.github.io/lottie-animations/
                 </a>
             </div>
-            <p style="margin-top: 10px; color: #666; font-size: 0.9em;">
+            <p style="margin-top: 15px; color: #666; font-size: 0.95em;">
                 <strong>Repository:</strong> 
-                <a href="https://github.com/rifaterdemsahin/lottie-animations" target="_blank" style="color: #0066cc;">
+                <a href="https://github.com/rifaterdemsahin/lottie-animations" target="_blank" style="color: #667eea; text-decoration: none; font-weight: 600;">
                     rifaterdemsahin/lottie-animations
                 </a>
             </p>
         </div>
         
+        <!-- Lottie Animations Section -->
         <div class="section">
-            <h2>🎭 Animation Demos</h2>
-            <div class="file-grid">
-                <div class="file-card">
-                    <h3>Bouncing Blue Ball <span class="badge">Interactive</span></h3>
-                    <p>A smooth bouncing ball animation created with Lottie. Features a blue ball with realistic physics and beautiful gradients.</p>
-                    <a href="symbols/lottie/ball.html" class="file-link demo-link">View Demo</a>
-                    <a href="https://github.com/rifaterdemsahin/lottie-animations/blob/main/symbols/lottie/ball.html" target="_blank" class="file-link source-link">View Source</a>
+            <div class="section-header">
+                <span class="section-icon">🎭</span>
+                <div>
+                    <h2>Lottie Animations</h2>
+                    <p class="section-description">Vector-based animations created with Lottie.js - lightweight, scalable, and smooth</p>
                 </div>
             </div>
-        </div>
-        
-        <div class="section">
-            <h2>📁 Project Files</h2>
-            <div class="file-grid">
-                <div class="file-card">
-                    <h3>README.md</h3>
-                    <p>Project documentation and setup instructions for creating animations using AI.</p>
-                    <a href="https://github.com/rifaterdemsahin/lottie-animations/blob/main/README.md" target="_blank" class="file-link">View File</a>
+            <div class="animation-grid">
+                <div class="animation-card">
+                    <div class="badge-container">
+                        <span class="badge badge-lottie">Lottie</span>
+                    </div>
+                    <h3><span class="animation-icon">⚽</span> Bouncing Ball</h3>
+                    <p>A smooth bouncing ball animation with realistic physics and beautiful gradients.</p>
+                    <div class="card-actions">
+                        <a href="symbols/lottie/ball.html" class="btn btn-primary">View Demo</a>
+                    </div>
                 </div>
                 
-                <div class="file-card">
-                    <h3>ball.html</h3>
-                    <p>Complete HTML file with embedded Lottie animation for a bouncing ball effect.</p>
-                    <a href="https://github.com/rifaterdemsahin/lottie-animations/blob/main/symbols/lottie/ball.html" target="_blank" class="file-link">View Source</a>
+                <div class="animation-card">
+                    <div class="badge-container">
+                        <span class="badge badge-lottie">Lottie</span>
+                    </div>
+                    <h3><span class="animation-icon">🎯</span> Counter</h3>
+                    <p>An animated counter demonstrating number animations with smooth transitions.</p>
+                    <div class="card-actions">
+                        <a href="symbols/lottie/counter.html" class="btn btn-primary">View Demo</a>
+                    </div>
+                </div>
+                
+                <div class="animation-card">
+                    <div class="badge-container">
+                        <span class="badge badge-lottie">Lottie</span>
+                        <span class="badge badge-threejs">Three.js</span>
+                    </div>
+                    <h3><span class="animation-icon">📊</span> Counter with Three.js</h3>
+                    <p>A 3D data visualization combining Lottie animations with Three.js for dynamic counters and pie charts.</p>
+                    <div class="card-actions">
+                        <a href="symbols/lottie/counter-with-threejs.html" class="btn btn-primary">View Demo</a>
+                    </div>
+                </div>
+                
+                <div class="animation-card">
+                    <div class="badge-container">
+                        <span class="badge badge-lottie">Lottie</span>
+                    </div>
+                    <h3><span class="animation-icon">🧊</span> Cube</h3>
+                    <p>A rotating 3D cube animation with smooth transitions and visual effects.</p>
+                    <div class="card-actions">
+                        <a href="symbols/lottie/cube.html" class="btn btn-primary">View Demo</a>
+            </div>
+        </div>
+        
+                <div class="animation-card">
+                    <div class="badge-container">
+                        <span class="badge badge-lottie">Lottie</span>
+                    </div>
+                    <h3><span class="animation-icon">🔧</span> Assembly</h3>
+                    <p>An assembly line animation showing mechanical processes and workflows.</p>
+                    <div class="card-actions">
+                        <a href="symbols/lottie/assembly.html" class="btn btn-primary">View Demo</a>
+                    </div>
+                </div>
+                
+                <div class="animation-card">
+                    <div class="badge-container">
+                        <span class="badge badge-lottie">Lottie</span>
+                        <span class="badge badge-ai">AI Generated</span>
+                    </div>
+                    <h3><span class="animation-icon">🤖</span> AI vs Freelancer</h3>
+                    <p>A comparison animation showcasing AI capabilities versus traditional freelancing approaches.</p>
+                    <div class="card-actions">
+                        <a href="symbols/lottie/ai-vs-freelancer.html" class="btn btn-primary">View Demo</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Three.js Animations Section -->
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">🎬</span>
+                <div>
+                    <h2>Three.js 3D Animations</h2>
+                    <p class="section-description">Interactive 3D graphics, visualizations, and educational demonstrations powered by WebGL</p>
+                </div>
+            </div>
+            
+            <!-- Basic 3D Animations -->
+            <div style="margin-top: 40px;">
+                <h3 style="color: #667eea; margin-bottom: 20px; font-size: 1.5em;">✨ Basic 3D Shapes</h3>
+                <div class="animation-grid">
+                    <div class="animation-card">
+                        <div class="badge-container">
+                            <span class="badge badge-threejs">Three.js</span>
+                        </div>
+                        <h3><span class="animation-icon">🔤</span> 3D Text</h3>
+                        <p>A rotating 3D text that says "Hello three.js!" with beveled edges and lighting.</p>
+                        <div class="card-actions">
+                            <a href="symbols/threejs/3d_text.html" class="btn btn-primary">View Demo</a>
+                        </div>
+                    </div>
+                    
+                    <div class="animation-card">
+                        <div class="badge-container">
+                            <span class="badge badge-threejs">Three.js</span>
+                        </div>
+                        <h3><span class="animation-icon">❤️</span> Beating Heart</h3>
+                        <p>A beating heart animation created with 3D shapes and scaling effects.</p>
+                        <div class="card-actions">
+                            <a href="symbols/threejs/beating_heart.html" class="btn btn-primary">View Demo</a>
+                        </div>
+                    </div>
+                    
+                    <div class="animation-card">
+                        <div class="badge-container">
+                            <span class="badge badge-threejs">Three.js</span>
+                        </div>
+                        <h3><span class="animation-icon">🎲</span> Icosahedron</h3>
+                        <p>A rotating icosahedron with wireframe material showing geometric beauty.</p>
+                        <div class="card-actions">
+                            <a href="symbols/threejs/icosahedron.html" class="btn btn-primary">View Demo</a>
+                        </div>
+                    </div>
+                    
+                    <div class="animation-card">
+                        <div class="badge-container">
+                            <span class="badge badge-threejs">Three.js</span>
+                        </div>
+                        <h3><span class="animation-icon">🍩</span> Rotating Torus</h3>
+                        <p>A rotating green torus (donut shape) with smooth animations.</p>
+                        <div class="card-actions">
+                            <a href="symbols/threejs/rotating_torus.html" class="btn btn-primary">View Demo</a>
+                        </div>
+                    </div>
+                    
+                    <div class="animation-card">
+                        <div class="badge-container">
+                            <span class="badge badge-threejs">Three.js</span>
+                        </div>
+                        <h3><span class="animation-icon">🎪</span> Torus Knot</h3>
+                        <p>A complex rotating torus knot with intricate geometric patterns.</p>
+                        <div class="card-actions">
+                            <a href="symbols/threejs/torus_knot.html" class="btn btn-primary">View Demo</a>
+                        </div>
+                    </div>
+                    
+                    <div class="animation-card">
+                        <div class="badge-container">
+                            <span class="badge badge-threejs">Three.js</span>
+                        </div>
+                        <h3><span class="animation-icon">🫖</span> Teapot</h3>
+                        <p>The classic 3D teapot (Utah Teapot) rotating in 3D space.</p>
+                        <div class="card-actions">
+                            <a href="symbols/threejs/teapot.html" class="btn btn-primary">View Demo</a>
+                        </div>
+                    </div>
+                    
+                    <div class="animation-card">
+                        <div class="badge-container">
+                            <span class="badge badge-threejs">Three.js</span>
+                        </div>
+                        <h3><span class="animation-icon">🚗</span> Simple Car</h3>
+                        <p>A simple car model with rotating wheels demonstrating 3D modeling basics.</p>
+                        <div class="card-actions">
+                            <a href="symbols/threejs/simple_car.html" class="btn btn-primary">View Demo</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Physics & Motion -->
+            <div style="margin-top: 40px;">
+                <h3 style="color: #667eea; margin-bottom: 20px; font-size: 1.5em;">⚡ Physics & Motion</h3>
+                <div class="animation-grid">
+                    <div class="animation-card">
+                        <div class="badge-container">
+                            <span class="badge badge-threejs">Three.js</span>
+                        </div>
+                        <h3><span class="animation-icon">⚽</span> Bouncing Ball</h3>
+                        <p>A bouncing ball physics simulation with gravity and realistic bouncing effects.</p>
+                        <div class="card-actions">
+                            <a href="symbols/threejs/bouncing_ball.html" class="btn btn-primary">View Demo</a>
+                        </div>
+                    </div>
+                    
+                    <div class="animation-card">
+                        <div class="badge-container">
+                            <span class="badge badge-threejs">Three.js</span>
+                        </div>
+                        <h3><span class="animation-icon">🌊</span> Sine & Cosine Waves</h3>
+                        <p>An animation of sine and cosine waves moving in opposite directions.</p>
+                        <div class="card-actions">
+                            <a href="symbols/threejs/sine_cosine_waves.html" class="btn btn-primary">View Demo</a>
+                        </div>
+                    </div>
+                    
+                    <div class="animation-card">
+                        <div class="badge-container">
+                            <span class="badge badge-threejs">Three.js</span>
+                        </div>
+                        <h3><span class="animation-icon">🎀</span> Flowing Ribbon</h3>
+                        <p>A flowing ribbon animation with smooth curves and dynamic motion.</p>
+                        <div class="card-actions">
+                            <a href="symbols/threejs/flowing_ribbon.html" class="btn btn-primary">View Demo</a>
+                        </div>
+                    </div>
+                    
+                    <div class="animation-card">
+                        <div class="badge-container">
+                            <span class="badge badge-threejs">Three.js</span>
+                        </div>
+                        <h3><span class="animation-icon">🌍</span> Solar System</h3>
+                        <p>A 3D model of the solar system with a sun, planets, and moons orbiting in space.</p>
+                        <div class="card-actions">
+                            <a href="symbols/threejs/solar_system.html" class="btn btn-primary">View Demo</a>
+                        </div>
+                    </div>
+                    
+                    <div class="animation-card">
+                        <div class="badge-container">
+                            <span class="badge badge-threejs">Three.js</span>
+                        </div>
+                        <h3><span class="animation-icon">🧬</span> DNA Helix</h3>
+                        <p>A rotating DNA helix animation with two strands and connecting cylinders.</p>
+                        <div class="card-actions">
+                            <a href="symbols/threejs/dna_helix.html" class="btn btn-primary">View Demo</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Particles & Effects -->
+            <div style="margin-top: 40px;">
+                <h3 style="color: #667eea; margin-bottom: 20px; font-size: 1.5em;">✨ Particles & Effects</h3>
+                <div class="animation-grid">
+                    <div class="animation-card">
+                        <div class="badge-container">
+                            <span class="badge badge-threejs">Three.js</span>
+                        </div>
+                        <h3><span class="animation-icon">🌐</span> Particle Sphere</h3>
+                        <p>A rotating sphere made of particles creating a mesmerizing visual effect.</p>
+                        <div class="card-actions">
+                            <a href="symbols/threejs/particle_sphere.html" class="btn btn-primary">View Demo</a>
+                        </div>
+                    </div>
+                    
+                    <div class="animation-card">
+                        <div class="badge-container">
+                            <span class="badge badge-threejs">Three.js</span>
+                        </div>
+                        <h3><span class="animation-icon">☁️</span> Point Cloud</h3>
+                        <p>A rotating point cloud visualization showing 3D data points in space.</p>
+                        <div class="card-actions">
+                            <a href="symbols/threejs/point_cloud.html" class="btn btn-primary">View Demo</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Interactive Features -->
+            <div style="margin-top: 40px;">
+                <h3 style="color: #667eea; margin-bottom: 20px; font-size: 1.5em;">🖱️ Interactive Features</h3>
+                <div class="animation-grid">
+                    <div class="animation-card">
+                        <div class="badge-container">
+                            <span class="badge badge-threejs">Three.js</span>
+                            <span class="badge badge-interactive">Interactive</span>
+                        </div>
+                        <h3><span class="animation-icon">🎯</span> Raycasting</h3>
+                        <p>An interactive example where clicking on objects changes their color using raycasting.</p>
+                        <div class="card-actions">
+                            <a href="symbols/threejs/raycasting.html" class="btn btn-primary">View Demo</a>
+                        </div>
+                    </div>
+                    
+                    <div class="animation-card">
+                        <div class="badge-container">
+                            <span class="badge badge-threejs">Three.js</span>
+                            <span class="badge badge-interactive">Interactive</span>
+                        </div>
+                        <h3><span class="animation-icon">📷</span> Camera Controls</h3>
+                        <p>OrbitControls example allowing you to pan, zoom, and rotate the camera around the scene.</p>
+                        <div class="card-actions">
+                            <a href="symbols/threejs/camera_controls.html" class="btn btn-primary">View Demo</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Rendering & Materials -->
+            <div style="margin-top: 40px;">
+                <h3 style="color: #667eea; margin-bottom: 20px; font-size: 1.5em;">🎨 Rendering & Materials</h3>
+                <div class="animation-grid">
+                    <div class="animation-card">
+                        <div class="badge-container">
+                            <span class="badge badge-threejs">Three.js</span>
+                        </div>
+                        <h3><span class="animation-icon">💡</span> Lighting Types</h3>
+                        <p>Demonstration of different lighting types: Ambient, Directional, Point, and Spot lights.</p>
+                        <div class="card-actions">
+                            <a href="symbols/threejs/lighting_types.html" class="btn btn-primary">View Demo</a>
+                        </div>
+                    </div>
+                    
+                    <div class="animation-card">
+                        <div class="badge-container">
+                            <span class="badge badge-threejs">Three.js</span>
+                        </div>
+                        <h3><span class="animation-icon">✨</span> Material Properties</h3>
+                        <p>Demonstration of different material properties: metalness, roughness, and emissive materials.</p>
+                        <div class="card-actions">
+                            <a href="symbols/threejs/material_properties.html" class="btn btn-primary">View Demo</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Algorithm Visualizations -->
+            <div style="margin-top: 40px;">
+                <h3 style="color: #667eea; margin-bottom: 20px; font-size: 1.5em;">📊 Algorithm Visualizations</h3>
+                <div class="animation-grid">
+                    <div class="animation-card">
+                        <div class="badge-container">
+                            <span class="badge badge-threejs">Three.js</span>
+                        </div>
+                        <h3><span class="animation-icon">📈</span> Sorting Visualization</h3>
+                        <p>A visualization of the bubble sort algorithm using an animated bar chart.</p>
+                        <div class="card-actions">
+                            <a href="symbols/threejs/sorting_visualization.html" class="btn btn-primary">View Demo</a>
+                        </div>
+                    </div>
+                    
+                    <div class="animation-card">
+                        <div class="badge-container">
+                            <span class="badge badge-threejs">Three.js</span>
+                        </div>
+                        <h3><span class="animation-icon">🌀</span> Fractal Generation</h3>
+                        <p>A fractal generation animation of the Mandelbrot set with beautiful mathematical patterns.</p>
+                        <div class="card-actions">
+                            <a href="symbols/threejs/fractal_generation.html" class="btn btn-primary">View Demo</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- AI & Machine Learning Visualizations -->
+            <div style="margin-top: 40px;">
+                <h3 style="color: #667eea; margin-bottom: 20px; font-size: 1.5em;">🤖 AI & Machine Learning</h3>
+                <div class="animation-grid">
+                    <div class="animation-card">
+                        <div class="badge-container">
+                            <span class="badge badge-threejs">Three.js</span>
+                            <span class="badge badge-ai">AI/ML</span>
+                        </div>
+                        <h3><span class="animation-icon">🧠</span> Neural Network</h3>
+                        <p>A visualization of a feedforward neural network with input, hidden, and output layers.</p>
+                        <div class="card-actions">
+                            <a href="symbols/threejs/neural_network.html" class="btn btn-primary">View Demo</a>
+                        </div>
+                    </div>
+                    
+                    <div class="animation-card">
+                        <div class="badge-container">
+                            <span class="badge badge-threejs">Three.js</span>
+                            <span class="badge badge-ai">AI/ML</span>
+                        </div>
+                        <h3><span class="animation-icon">🌳</span> Decision Tree</h3>
+                        <p>A visualization of a decision tree with procedurally generated nodes and connections.</p>
+                        <div class="card-actions">
+                            <a href="symbols/threejs/decision_tree.html" class="btn btn-primary">View Demo</a>
+                        </div>
+                    </div>
+                    
+                    <div class="animation-card">
+                        <div class="badge-container">
+                            <span class="badge badge-threejs">Three.js</span>
+                            <span class="badge badge-ai">AI/ML</span>
+                        </div>
+                        <h3><span class="animation-icon">📊</span> Confusion Matrix</h3>
+                        <p>A 3D bar chart visualization of a confusion matrix for classification evaluation.</p>
+                        <div class="card-actions">
+                            <a href="symbols/threejs/confusion_matrix.html" class="btn btn-primary">View Demo</a>
+                        </div>
+                    </div>
+                    
+                    <div class="animation-card">
+                        <div class="badge-container">
+                            <span class="badge badge-threejs">Three.js</span>
+                            <span class="badge badge-ai">AI/ML</span>
+                        </div>
+                        <h3><span class="animation-icon">⛰️</span> Gradient Descent</h3>
+                        <p>A visualization of the gradient descent algorithm with a 3D surface plot and rolling ball.</p>
+                        <div class="card-actions">
+                            <a href="symbols/threejs/gradient_descent.html" class="btn btn-primary">View Demo</a>
+                        </div>
+                    </div>
+                    
+                    <div class="animation-card">
+                        <div class="badge-container">
+                            <span class="badge badge-threejs">Three.js</span>
+                            <span class="badge badge-ai">AI/ML</span>
+                        </div>
+                        <h3><span class="animation-icon">🎮</span> Reinforcement Learning</h3>
+                        <p>A visualization of a reinforcement learning agent navigating a grid world environment.</p>
+                        <div class="card-actions">
+                            <a href="symbols/threejs/reinforcement_learning.html" class="btn btn-primary">View Demo</a>
+                        </div>
+                    </div>
+                    
+                    <div class="animation-card">
+                        <div class="badge-container">
+                            <span class="badge badge-threejs">Three.js</span>
+                            <span class="badge badge-ai">AI/ML</span>
+                        </div>
+                        <h3><span class="animation-icon">🎨</span> Generative Adversarial Network</h3>
+                        <p>A visualization of a GAN with generator and discriminator networks competing.</p>
+                        <div class="card-actions">
+                            <a href="symbols/threejs/gan.html" class="btn btn-primary">View Demo</a>
+                        </div>
+                    </div>
+                    
+                    <div class="animation-card">
+                        <div class="badge-container">
+                            <span class="badge badge-threejs">Three.js</span>
+                            <span class="badge badge-ai">AI/ML</span>
+                        </div>
+                        <h3><span class="animation-icon">🔄</span> Recurrent Neural Network</h3>
+                        <p>A visualization of an RNN with signals propagating through recurrent connections.</p>
+                        <div class="card-actions">
+                            <a href="symbols/threejs/rnn.html" class="btn btn-primary">View Demo</a>
+                        </div>
+                    </div>
+                    
+                    <div class="animation-card">
+                        <div class="badge-container">
+                            <span class="badge badge-threejs">Three.js</span>
+                            <span class="badge badge-ai">AI/ML</span>
+                        </div>
+                        <h3><span class="animation-icon">📉</span> Principal Component Analysis</h3>
+                        <p>A visualization of PCA with 3D data points being projected onto a 2D plane.</p>
+                        <div class="card-actions">
+                            <a href="symbols/threejs/pca.html" class="btn btn-primary">View Demo</a>
+                        </div>
+                    </div>
+                    
+                    <div class="animation-card">
+                        <div class="badge-container">
+                            <span class="badge badge-threejs">Three.js</span>
+                            <span class="badge badge-ai">AI/ML</span>
+                        </div>
+                        <h3><span class="animation-icon">🎯</span> Clustering</h3>
+                        <p>A visualization of clustering algorithms grouping data points into clusters in 3D space.</p>
+                        <div class="card-actions">
+                            <a href="symbols/threejs/clustering.html" class="btn btn-primary">View Demo</a>
+                        </div>
+                    </div>
+                    
+                    <div class="animation-card">
+                        <div class="badge-container">
+                            <span class="badge badge-threejs">Three.js</span>
+                            <span class="badge badge-ai">AI/ML</span>
+                        </div>
+                        <h3><span class="animation-icon">🖼️</span> CNN Filter</h3>
+                        <p>A visualization of a CNN filter sliding over an image and producing a feature map.</p>
+                        <div class="card-actions">
+                            <a href="symbols/threejs/cnn_filter.html" class="btn btn-primary">View Demo</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
         
         <div class="section">
-            <h2>🚀 Quick Start</h2>
-            <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-top: 20px;">
-                <ol style="line-height: 2; color: #333;">
-                    <li>Clone the repository: <code style="background: #e9ecef; padding: 2px 6px; border-radius: 3px;">git clone https://github.com/rifaterdemsahin/lottie-animations.git</code></li>
-                    <li>Open any HTML file in your browser</li>
-                    <li>Explore the animations and modify the code</li>
-                    <li>Create your own Lottie animations using AI tools</li>
-                </ol>
-            </div>
-        </div>
-        
-        <div class="section">
-            <h2>🛠️ Technologies Used</h2>
-            <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px;">
-                <span class="badge" style="background: #ff6b6b;">HTML5</span>
-                <span class="badge" style="background: #4ecdc4;">CSS3</span>
-                <span class="badge" style="background: #45b7d1;">Lottie.js</span>
-                <span class="badge" style="background: #f9ca24;">JavaScript</span>
-                <span class="badge" style="background: #6c5ce7;">GitHub Pages</span>
+            <h2 style="text-align: center; margin-bottom: 30px;">🛠️ Technologies Used</h2>
+            <div class="tech-badges">
+                <span class="tech-badge">HTML5</span>
+                <span class="tech-badge">CSS3</span>
+                <span class="tech-badge">JavaScript</span>
+                <span class="tech-badge">Lottie.js</span>
+                <span class="tech-badge">Three.js</span>
+                <span class="tech-badge">WebGL</span>
+                <span class="tech-badge">GitHub Pages</span>
             </div>
         </div>
         
         <div class="footer">
-            <p>🎨 Built with ❤️ using AI-powered animation tools</p>
-            <p style="margin-top: 10px; font-size: 0.9em;">
+            <p style="font-size: 1.1em; margin-bottom: 10px;">🎨 Built with ❤️ using AI-powered animation tools</p>
+            <p style="color: #999; font-size: 0.9em;">
                 Last updated: <span id="last-updated"></span>
             </p>
         </div>
@@ -255,16 +896,6 @@
             year: 'numeric',
             month: 'long',
             day: 'numeric'
-        });
-        
-        // Add smooth scrolling for internal links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
-                });
-            });
         });
     </script>
 </body>
