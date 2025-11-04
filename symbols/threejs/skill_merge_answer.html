@@ -156,50 +156,88 @@
                 });
             });
 
-            // Create final answer text (initially hidden) - make it bigger and bold
-            const answerLines = [
-                'Customized',
-                'Cover Letter',
-                'Generated!'
-            ];
-            
-            answerLines.forEach((line, index) => {
-                const answerGeo = new TextGeometry(line, {
-                    font: font,
-                    size: 0.8,
-                    height: 0.2,
-                    curveSegments: 12
-                });
-                answerGeo.center();
-                const answerMat = new THREE.MeshStandardMaterial({ 
-                    color: 0xffffff,
-                    emissive: 0x00ff88,
-                    emissiveIntensity: 0.8
-                });
-                const answerMesh = new THREE.Mesh(answerGeo, answerMat);
-                answerMesh.position.set(0, -2 + (index * 1), 0);
-                answerMesh.scale.set(0, 0, 0);
-                answerMesh.visible = false;
-                answerMesh.userData.isAnswer = true;
-                scene.add(answerMesh);
-                answerText.push(answerMesh);
+            // Create package-like merged result (initially hidden)
+            // Main package box
+            const packageGeo = new THREE.BoxGeometry(4, 3, 2);
+            const packageMat = new THREE.MeshStandardMaterial({
+                color: 0xff8c42, // Orange package color
+                emissive: 0xff8c42,
+                emissiveIntensity: 0.3,
+                metalness: 0.3,
+                roughness: 0.7
             });
+            const packageMesh = new THREE.Mesh(packageGeo, packageMat);
+            packageMesh.position.set(0, 0, 0);
+            packageMesh.scale.set(0, 0, 0);
+            packageMesh.visible = false;
+            packageMesh.userData.isPackage = true;
+            scene.add(packageMesh);
+            meshes.push(packageMesh);
 
-            // Create merged result box (initially hidden)
-            const resultGeo = new THREE.BoxGeometry(5, 3, 0.5);
-            const resultMat = new THREE.MeshStandardMaterial({
-                color: 0x00ff88,
-                emissive: 0x00ff88,
+            // Package lid (top)
+            const lidGeo = new THREE.BoxGeometry(4.2, 0.3, 2.2);
+            const lidMat = new THREE.MeshStandardMaterial({
+                color: 0xff6b35, // Darker orange for lid
+                emissive: 0xff6b35,
+                emissiveIntensity: 0.2,
+                metalness: 0.4,
+                roughness: 0.6
+            });
+            const lidMesh = new THREE.Mesh(lidGeo, lidMat);
+            lidMesh.position.set(0, 1.65, 0);
+            lidMesh.scale.set(0, 0, 0);
+            lidMesh.visible = false;
+            lidMesh.userData.isPackagePart = true;
+            scene.add(lidMesh);
+            meshes.push(lidMesh);
+
+            // Package ribbon/tape (crossing strips)
+            const ribbonGeo1 = new THREE.BoxGeometry(4.5, 0.15, 0.3);
+            const ribbonMat = new THREE.MeshStandardMaterial({
+                color: 0xffd700, // Gold ribbon
+                emissive: 0xffd700,
                 emissiveIntensity: 0.5,
                 metalness: 0.8,
                 roughness: 0.2
             });
-            const resultMesh = new THREE.Mesh(resultGeo, resultMat);
-            resultMesh.position.set(0, 0, 0);
-            resultMesh.scale.set(0, 0, 0);
-            resultMesh.visible = false;
-            scene.add(resultMesh);
-            meshes.push(resultMesh);
+            const ribbon1 = new THREE.Mesh(ribbonGeo1, ribbonMat);
+            ribbon1.position.set(0, 0, 0);
+            ribbon1.scale.set(0, 0, 0);
+            ribbon1.visible = false;
+            ribbon1.userData.isPackagePart = true;
+            scene.add(ribbon1);
+            meshes.push(ribbon1);
+
+            const ribbonGeo2 = new THREE.BoxGeometry(0.3, 3.5, 0.3);
+            const ribbon2 = new THREE.Mesh(ribbonGeo2, ribbonMat);
+            ribbon2.position.set(0, 0, 0);
+            ribbon2.scale.set(0, 0, 0);
+            ribbon2.visible = false;
+            ribbon2.userData.isPackagePart = true;
+            scene.add(ribbon2);
+            meshes.push(ribbon2);
+
+            // "DYNAMIC RESPONSE" text at bottom of package
+            const responseText = 'DYNAMIC RESPONSE';
+            const responseGeo = new TextGeometry(responseText, {
+                font: font,
+                size: 0.5,
+                height: 0.1,
+                curveSegments: 12
+            });
+            responseGeo.center();
+            const responseMat = new THREE.MeshStandardMaterial({
+                color: 0xffffff,
+                emissive: 0xff8c42,
+                emissiveIntensity: 0.6
+            });
+            const responseMesh = new THREE.Mesh(responseGeo, responseMat);
+            responseMesh.position.set(0, -2.2, 1.1); // Bottom of package
+            responseMesh.scale.set(0, 0, 0);
+            responseMesh.visible = false;
+            responseMesh.userData.isAnswer = true;
+            scene.add(responseMesh);
+            answerText.push(responseMesh);
         }
 
         // Add lights
@@ -289,23 +327,34 @@
                     }
                 });
 
-                // Show result in the last 25% of animation
+                // Show package result in the last 25% of animation
                 if (progress > 0.75 && !showResult) {
                     showResult = true;
-                    const resultMesh = meshes[meshes.length - 1];
-                    resultMesh.visible = true;
+                    // Show all package parts
+                    meshes.forEach(mesh => {
+                        if (mesh.userData.isPackage || mesh.userData.isPackagePart) {
+                            mesh.visible = true;
+                        }
+                    });
                     answerText.forEach(text => text.visible = true);
                 }
 
                 if (showResult) {
                     const resultProgress = (progress - 0.75) / 0.25; // Scale to 0-1
-                    const resultMesh = meshes[meshes.length - 1];
                     const scale = THREE.MathUtils.smoothstep(0, 1, resultProgress);
-                    resultMesh.scale.set(scale, scale, scale);
-                    answerText.forEach((text, index) => {
-                        const delay = index * 0.2;
-                        const textProgress = Math.max(0, Math.min(1, (resultProgress - delay) / (1 - delay)));
-                        const textScale = THREE.MathUtils.smoothstep(0, 1, textProgress);
+                    
+                    // Scale all package parts together
+                    meshes.forEach(mesh => {
+                        if (mesh.userData.isPackage || mesh.userData.isPackagePart) {
+                            mesh.scale.set(scale, scale, scale);
+                            // Rotate package slightly
+                            mesh.rotation.y += 0.01;
+                        }
+                    });
+                    
+                    // Scale and rotate text
+                    answerText.forEach(text => {
+                        const textScale = THREE.MathUtils.smoothstep(0, 1, resultProgress);
                         text.scale.set(textScale, textScale, textScale);
                         text.rotation.y += 0.02;
                     });
@@ -318,7 +367,11 @@
             } else {
                 // Continue rotating after convergence
                 meshes.forEach(mesh => {
-                    mesh.rotation.y += 0.01;
+                    if (mesh.userData.isPackage || mesh.userData.isPackagePart) {
+                        mesh.rotation.y += 0.01;
+                    } else {
+                        mesh.rotation.y += 0.01;
+                    }
                 });
                 answerText.forEach(text => text.rotation.y += 0.02);
             }
