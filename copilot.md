@@ -1,12 +1,30 @@
 # Copilot Notes for Lottie Animations Project
 
+## 📁 **Current Project Structure** (Updated Nov 5, 2025)
+
+```
+/lottie-animations/
+├── symbols/
+│   └── threejs/          # All Three.js animations (including agents)
+├── formula/              # Animation formulas and templates
+├── real/                 # Real-world examples and OKRs
+├── semblance/           # Documentation and reports
+├── .zencoder/           # Zencoder configurations
+├── index.html           # Main showcase page
+├── copilot.md          # This file
+└── README.md           # Project documentation
+```
+
 ## Animation Creation Guidelines
 
 When creating new animations for this project:
 
-1. **File Structure**: All Three.js animations go in `symbols/threejs/` directory
+1. **File Structure**: 
+   - **All animations** (including agent animations) go in `symbols/threejs/` directory
+   - **Agent animations specifically**: When asked to create agent-related animations, place them in `symbols/threejs/` (e.g., `symbols/threejs/agent-collaboration.html`)
+
 2. **Template**: Use the standard template with:
-   - Prompt container with copy button functionality
+   - Prompt container with copy button functionality  
    - Link to `shared/prompt.css` and `shared/prompt.js`
    - Import map for Three.js modules
    - Standard Three.js setup (scene, camera, renderer, lights)
@@ -15,7 +33,7 @@ When creating new animations for this project:
    - Appropriate category section
    - Descriptive card with icon
    - Badge labels (Three.js, Lottie, AI/ML, Interactive)
-   - Link to the animation file
+   - **IMPORTANT**: Link to the animation file using correct path: `symbols/threejs/filename.html`
 
 4. **Prompt Template**: Include the prompt container with:
    - Brief description
@@ -94,4 +112,44 @@ git push origin main
 ```
 
 ### ✨ **REMEMBER**: Always commit and push after creating or modifying animations!
+
+---
+
+## 🔄 **FOLDER STRUCTURE UPDATE - November 5, 2025**
+
+### 📋 **Files Moved & References Fixed**
+
+#### **Agent Animation Files Relocated:**
+- `agent-collaboration.html` → `symbols/threejs/agent-collaboration.html`
+- `gemini-image-to-markdown.html` → `symbols/threejs/gemini-image-to-markdown.html`
+
+#### **References Updated in index.html:**
+- Fixed navigation links in "Latest 3 Animations" section
+- Updated animation card links to point to correct paths
+- All links now use: `symbols/threejs/[filename].html`
+
+### 💻 **COMMIT COMMANDS FOR STRUCTURE FIX:**
+
+```bash
+# Add all changes
+git add .
+
+# Commit the folder structure fix
+git commit -m "fix: Update folder structure and fix animation references
+
+- Move agent animations to symbols/threejs/ directory
+- Update all links in index.html to reflect new file locations
+- Fix navigation references for agent-collaboration and gemini-image-to-markdown
+- Document new folder structure in copilot.md
+- Establish standard location for all future agent animations"
+
+# Push to repository
+git push origin main
+```
+
+### 🎯 **FUTURE AGENT ANIMATION GUIDELINES:**
+- **Location**: All agent animations MUST be created in `symbols/threejs/` directory
+- **Naming**: Use descriptive names (e.g., `agent-collaboration.html`, `agent-workflow.html`)
+- **References**: Always use full path `symbols/threejs/filename.html` in index.html
+- **Documentation**: Update copilot.md when new patterns emerge
 
