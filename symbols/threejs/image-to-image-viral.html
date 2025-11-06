@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image to Image AI Conversion - Viral Post Creator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #ff6b6b 0%, #feca57 50%, #48dbfb 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            color: white;
+        }
+
+        .container {
+            max-width: 1400px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            -webkit-backdrop-filter: blur(15px);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            background: linear-gradient(45deg, #ff6b6b, #feca57, #48dbfb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .workflow-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            gap: 30px;
+            align-items: start;
+            margin-bottom: 30px;
+        }
+
+        .input-zone {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .image-upload {
+            width: 250px;
+            height: 200px;
+            background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+            border-radius: 15px;
+            border: 3px dashed rgba(255, 255, 255, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .image-upload:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+
+        .upload-icon {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        .upload-label {
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .image-preview {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300"><rect fill="%234ecdc4" width="400" height="300"/><text x="50%" y="50%" text-anchor="middle" fill="white" font-size="24" dy=".3em">Sample Image</text></svg>');
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: all 0.5s ease;
+        }
+
+        .image-preview.visible {
+            opacity: 1;
+        }
+
+        .ai-processing {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .ai-brain {
+            width: 180px;
+            height: 180px;
+            background: linear-gradient(135deg, #feca57, #ff9ff3);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            animation: brainPulse 2s infinite;
+        }
+
+        .brain-icon {
+            font-size: 3.5em;
+            margin-bottom: 5px;
+        }
+
+        .ai-label {
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .processing-steps {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .processing-step {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            opacity: 0.5;
+            transition: all 0.3s ease;
+            transform: scale(0.9);
+        }
+
+        .processing-step.active {
+            opacity: 1;
+            transform: scale(1);
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .step-icon {
+            font-size: 1.5em;
+            margin-bottom: 8px;
+        }
+
+        .step-text {
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+
+        .viral-gallery {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .viral-post {
+            width: 150px;
+            height: 200px;
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            opacity: 0;
+            transform: translateY(20px) scale(0.8);
+            transition: all 0.5s ease;
+        }
+
+        .viral-post.visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .viral-post:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .viral-instagram {
+            background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+        }
+
+        .viral-tiktok {
+            background: linear-gradient(45deg, #ff0050, #00f2ea);
+        }
+
+        .viral-twitter {
+            background: linear-gradient(45deg, #1da1f2, #0e71c8);
+        }
+
+        .viral-linkedin {
+            background: linear-gradient(45deg, #0077b5, #00a0dc);
+        }
+
+        .post-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+            padding: 15px 10px 10px;
+            color: white;
+        }
+
+        .platform-icon {
+            font-size: 1.2em;
+            margin-bottom: 5px;
+        }
+
+        .platform-name {
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+
+        .viral-metrics {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 15px;
+            padding: 5px 8px;
+            font-size: 0.7em;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #ff6b6b, #feca57);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .feature-icon {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+        }
+
+        .feature-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .feature-desc {
+            font-size: 0.9em;
+            opacity: 0.9;
+            line-height: 1.4;
+        }
+
+        .conversion-arrow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            opacity: 0;
+            transition: all 0.5s ease;
+        }
+
+        .conversion-arrow.active {
+            opacity: 1;
+            animation: arrowFlow 2s infinite;
+        }
+
+        @keyframes brainPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        @keyframes arrowFlow {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(10px); }
+        }
+
+        .viral-counter {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7em;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .workflow-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .viral-gallery {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            
+            .viral-post {
+                width: 100px;
+                height: 130px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🖼️ Image to Image AI Conversion</h1>
+        <p style="text-align: center; margin-bottom: 30px; font-size: 1.2em; opacity: 0.9;">
+            Transform any image into viral social media posts across multiple platforms
+        </p>
+
+        <div class="workflow-grid">
+            <!-- Input Section -->
+            <div class="input-zone">
+                <div class="image-upload" onclick="uploadImage()">
+                    <div class="upload-icon">📸</div>
+                    <div class="upload-label">Upload Image<br><small>JPG, PNG, GIF</small></div>
+                    <div class="image-preview" id="imagePreview"></div>
+                </div>
+                
+                <div class="conversion-arrow" id="arrow1">➡️</div>
+            </div>
+
+            <!-- AI Processing Section -->
+            <div class="ai-processing">
+                <div class="ai-brain">
+                    <div class="brain-icon">🧠</div>
+                    <div class="ai-label">AI Engine</div>
+                </div>
+                
+                <div class="processing-steps">
+                    <div class="processing-step" id="proc1">
+                        <div class="step-icon">🔍</div>
+                        <div class="step-text">Image Analysis</div>
+                    </div>
+                    <div class="processing-step" id="proc2">
+                        <div class="step-icon">🎨</div>
+                        <div class="step-text">Style Adaptation</div>
+                    </div>
+                    <div class="processing-step" id="proc3">
+                        <div class="step-icon">📱</div>
+                        <div class="step-text">Platform Optimization</div>
+                    </div>
+                    <div class="processing-step" id="proc4">
+                        <div class="step-icon">🚀</div>
+                        <div class="step-text">Viral Enhancement</div>
+                    </div>
+                </div>
+                
+                <div class="conversion-arrow" id="arrow2">➡️</div>
+            </div>
+
+            <!-- Output Section -->
+            <div class="viral-gallery">
+                <div class="viral-post viral-instagram" id="instagram" onclick="showPostDetails('instagram')">
+                    <div class="viral-counter">
+                        <div>1.2M</div>
+                        <div>❤️</div>
+                    </div>
+                    <div class="post-overlay">
+                        <div class="platform-icon">📷</div>
+                        <div class="platform-name">Instagram</div>
+                    </div>
+                    <div class="viral-metrics">🔥 Viral</div>
+                </div>
+
+                <div class="viral-post viral-tiktok" id="tiktok" onclick="showPostDetails('tiktok')">
+                    <div class="viral-counter">
+                        <div>2.8M</div>
+                        <div>👀</div>
+                    </div>
+                    <div class="post-overlay">
+                        <div class="platform-icon">🎵</div>
+                        <div class="platform-name">TikTok</div>
+                    </div>
+                    <div class="viral-metrics">💥 Trending</div>
+                </div>
+
+                <div class="viral-post viral-twitter" id="twitter" onclick="showPostDetails('twitter')">
+                    <div class="viral-counter">
+                        <div>45K</div>
+                        <div>🔄</div>
+                    </div>
+                    <div class="post-overlay">
+                        <div class="platform-icon">🐦</div>
+                        <div class="platform-name">Twitter</div>
+                    </div>
+                    <div class="viral-metrics">📈 Hot</div>
+                </div>
+
+                <div class="viral-post viral-linkedin" id="linkedin" onclick="showPostDetails('linkedin')">
+                    <div class="viral-counter">
+                        <div>89K</div>
+                        <div>👍</div>
+                    </div>
+                    <div class="post-overlay">
+                        <div class="platform-icon">💼</div>
+                        <div class="platform-name">LinkedIn</div>
+                    </div>
+                    <div class="viral-metrics">✨ Pro</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🎯</div>
+                <div class="feature-title">Smart Targeting</div>
+                <div class="feature-desc">AI analyzes your image and adapts it for maximum engagement on each platform</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📏</div>
+                <div class="feature-title">Auto Sizing</div>
+                <div class="feature-desc">Automatically resizes and crops for optimal display across all social platforms</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎨</div>
+                <div class="feature-title">Style Variants</div>
+                <div class="feature-desc">Creates platform-specific visual styles that match audience preferences</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <div class="feature-title">Viral Prediction</div>
+                <div class="feature-desc">Uses AI to predict and enhance viral potential with trending elements</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn" onclick="startConversion()">🚀 Convert Image</button>
+            <button class="btn" onclick="uploadImage()">📁 Upload New Image</button>
+            <button class="btn" onclick="resetAll()">🔄 Reset</button>
+            <button class="btn" onclick="downloadAll()">⬇️ Download All</button>
+        </div>
+    </div>
+
+    <script>
+        let isConverting = false;
+
+        function uploadImage() {
+            const preview = document.getElementById('imagePreview');
+            preview.classList.add('visible');
+            
+            // Simulate file upload
+            setTimeout(() => {
+                if (!isConverting) {
+                    document.getElementById('arrow1').classList.add('active');
+                }
+            }, 500);
+        }
+
+        function startConversion() {
+            if (isConverting) return;
+            isConverting = true;
+
+            // Ensure image is uploaded
+            uploadImage();
+
+            setTimeout(() => {
+                // Start processing steps
+                const steps = ['proc1', 'proc2', 'proc3', 'proc4'];
+                steps.forEach((stepId, index) => {
+                    setTimeout(() => {
+                        document.getElementById(stepId).classList.add('active');
+                    }, index * 800);
+                });
+
+                // Show second arrow after processing
+                setTimeout(() => {
+                    document.getElementById('arrow2').classList.add('active');
+                    showViralPosts();
+                }, 3200);
+            }, 1000);
+        }
+
+        function showViralPosts() {
+            const posts = ['instagram', 'tiktok', 'twitter', 'linkedin'];
+            posts.forEach((postId, index) => {
+                setTimeout(() => {
+                    document.getElementById(postId).classList.add('visible');
+                }, index * 300);
+            });
+
+            setTimeout(() => {
+                isConverting = false;
+            }, 1200);
+        }
+
+        function showPostDetails(platform) {
+            const details = {
+                instagram: {
+                    title: 'Instagram Viral Post',
+                    features: '• Square format optimization\n• Story-ready vertical crop\n• Hashtag suggestions\n• Engagement hooks\n• Filter recommendations',
+                    metrics: '1.2M likes, 89K comments, 245K shares'
+                },
+                tiktok: {
+                    title: 'TikTok Viral Video',
+                    features: '• Vertical video format\n• Trending audio sync\n• Quick-grab attention\n• Gen-Z optimized\n• Challenge integration',
+                    metrics: '2.8M views, 340K likes, 45K shares'
+                },
+                twitter: {
+                    title: 'Twitter Viral Tweet',
+                    features: '• Conversation starter\n• Meme potential\n• News angle\n• Retweet optimization\n• Thread continuation',
+                    metrics: '45K retweets, 123K likes, 8.9K comments'
+                },
+                linkedin: {
+                    title: 'LinkedIn Professional Post',
+                    features: '• Professional framing\n• Industry insights\n• Career relevance\n• Network engagement\n• Thought leadership',
+                    metrics: '89K reactions, 12K comments, 34K shares'
+                }
+            };
+
+            const detail = details[platform];
+            alert(`${detail.title}\n\n${detail.features}\n\nProjected Metrics:\n${detail.metrics}`);
+        }
+
+        function resetAll() {
+            isConverting = false;
+
+            // Reset image preview
+            document.getElementById('imagePreview').classList.remove('visible');
+
+            // Reset arrows
+            document.querySelectorAll('.conversion-arrow').forEach(arrow => {
+                arrow.classList.remove('active');
+            });
+
+            // Reset processing steps
+            document.querySelectorAll('.processing-step').forEach(step => {
+                step.classList.remove('active');
+            });
+
+            // Reset viral posts
+            document.querySelectorAll('.viral-post').forEach(post => {
+                post.classList.remove('visible');
+            });
+        }
+
+        function downloadAll() {
+            if (!document.querySelector('.viral-post.visible')) {
+                alert('Please convert an image first to download viral posts!');
+                return;
+            }
+
+            alert('🎉 Downloading All Viral Posts!\n\n📦 Package includes:\n• Instagram square + story formats\n• TikTok vertical video template\n• Twitter optimized image\n• LinkedIn professional version\n• Platform-specific captions\n• Hashtag recommendations\n• Engagement strategy guide');
+        }
+
+        // Auto-demo on load
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                if (window.location.hash === '#demo') {
+                    startConversion();
+                }
+            }, 2000);
+        });
+    </script>
+</body>
+</html>

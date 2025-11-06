@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document to Text AI Conversion - CV Processing</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            color: white;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .workflow-container {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            gap: 30px;
+            align-items: center;
+            margin-bottom: 30px;
+            min-height: 400px;
+        }
+
+        .input-section, .output-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .document-upload {
+            width: 200px;
+            height: 250px;
+            background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 3px dashed rgba(255, 255, 255, 0.3);
+        }
+
+        .document-upload:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .document-icon {
+            font-size: 4em;
+            margin-bottom: 15px;
+        }
+
+        .upload-text {
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .processing-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .ai-processor {
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            animation: pulse 2s infinite;
+        }
+
+        .chatgpt-logo {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        .processing-text {
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .data-flow {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            transition: all 0.5s ease;
+        }
+
+        .data-flow.active {
+            opacity: 1;
+        }
+
+        .flow-arrow {
+            font-size: 2em;
+            animation: flow 2s infinite;
+        }
+
+        .flow-text {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.9em;
+        }
+
+        .output-files {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .output-file {
+            width: 120px;
+            height: 150px;
+            background: linear-gradient(135deg, #45b7d1, #96c93d);
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+            cursor: pointer;
+        }
+
+        .output-file.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .output-file:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .file-icon {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .file-label {
+            font-size: 0.8em;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+            border-radius: 3px;
+            transition: width 3s ease;
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .step {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            opacity: 0.5;
+            transition: all 0.3s ease;
+        }
+
+        .step.active {
+            opacity: 1;
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        .step-number {
+            width: 30px;
+            height: 30px;
+            background: #4ecdc4;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            font-weight: bold;
+        }
+
+        .step-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .step-desc {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        @keyframes flow {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(10px); }
+        }
+
+        .conversion-details {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            opacity: 0;
+            transform: translateX(-20px);
+            transition: all 0.5s ease;
+        }
+
+        .detail-item.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .detail-icon {
+            width: 40px;
+            height: 40px;
+            background: #4ecdc4;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+        }
+
+        @media (max-width: 768px) {
+            .workflow-container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .steps {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📄 Document to Text AI Conversion</h1>
+        <p style="text-align: center; margin-bottom: 30px; font-size: 1.2em; opacity: 0.9;">
+            Transform CVs into intelligent source files for custom cover letters and job applications
+        </p>
+
+        <div class="workflow-container">
+            <!-- Input Section -->
+            <div class="input-section">
+                <div class="document-upload" onclick="startConversion()">
+                    <div class="document-icon">📄</div>
+                    <div class="upload-text">Upload CV Document<br><small>PDF, DOC, DOCX</small></div>
+                </div>
+                <div class="data-flow" id="dataFlow1">
+                    <div class="flow-arrow">➡️</div>
+                    <div class="flow-text">Document Data</div>
+                </div>
+            </div>
+
+            <!-- Processing Section -->
+            <div class="processing-section">
+                <div class="ai-processor">
+                    <div class="chatgpt-logo">🤖</div>
+                    <div class="processing-text">ChatGPT<br>Processing</div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="conversion-details" id="conversionDetails">
+                    <div class="detail-item" id="detail1">
+                        <div class="detail-icon">🔍</div>
+                        <div>Extracting text from document</div>
+                    </div>
+                    <div class="detail-item" id="detail2">
+                        <div class="detail-icon">🧠</div>
+                        <div>Analyzing skills and experience</div>
+                    </div>
+                    <div class="detail-item" id="detail3">
+                        <div class="detail-icon">📊</div>
+                        <div>Creating structured data source</div>
+                    </div>
+                    <div class="detail-item" id="detail4">
+                        <div class="detail-icon">✨</div>
+                        <div>Generating customizable templates</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Output Section -->
+            <div class="output-section">
+                <div class="data-flow" id="dataFlow2">
+                    <div class="flow-arrow">➡️</div>
+                    <div class="flow-text">Structured Data</div>
+                </div>
+                <div class="output-files">
+                    <div class="output-file" id="output1" onclick="showPreview('cv')">
+                        <div class="file-icon">📝</div>
+                        <div class="file-label">Custom CV Templates</div>
+                    </div>
+                    <div class="output-file" id="output2" onclick="showPreview('cover')">
+                        <div class="file-icon">💌</div>
+                        <div class="file-label">Cover Letter Generator</div>
+                    </div>
+                    <div class="output-file" id="output3" onclick="showPreview('answers')">
+                        <div class="file-icon">💬</div>
+                        <div class="file-label">Interview Answers</div>
+                    </div>
+                    <div class="output-file" id="output4" onclick="showPreview('source')">
+                        <div class="file-icon">🗃️</div>
+                        <div class="file-label">Source File Database</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="steps">
+            <div class="step" id="step1">
+                <div class="step-number">1</div>
+                <div class="step-title">Upload Document</div>
+                <div class="step-desc">Upload your CV in any format</div>
+            </div>
+            <div class="step" id="step2">
+                <div class="step-number">2</div>
+                <div class="step-title">AI Analysis</div>
+                <div class="step-desc">ChatGPT extracts and analyzes content</div>
+            </div>
+            <div class="step" id="step3">
+                <div class="step-number">3</div>
+                <div class="step-title">Data Structuring</div>
+                <div class="step-desc">Creates organized source file</div>
+            </div>
+            <div class="step" id="step4">
+                <div class="step-number">4</div>
+                <div class="step-title">Generate Outputs</div>
+                <div class="step-desc">Custom CVs, letters, and answers</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn" onclick="startConversion()">🚀 Start Conversion</button>
+            <button class="btn" onclick="resetAnimation()">🔄 Reset</button>
+            <button class="btn" onclick="showDemo()">👁️ View Demo</button>
+        </div>
+    </div>
+
+    <script>
+        let isProcessing = false;
+        let currentStep = 0;
+
+        function startConversion() {
+            if (isProcessing) return;
+            isProcessing = true;
+            currentStep = 0;
+
+            // Reset all elements
+            resetAnimation();
+
+            // Start the conversion process
+            setTimeout(() => {
+                setActiveStep(1);
+                document.getElementById('dataFlow1').classList.add('active');
+                
+                setTimeout(() => {
+                    setActiveStep(2);
+                    startProgressBar();
+                    showConversionDetails();
+                    
+                    setTimeout(() => {
+                        setActiveStep(3);
+                        document.getElementById('dataFlow2').classList.add('active');
+                        
+                        setTimeout(() => {
+                            setActiveStep(4);
+                            showOutputFiles();
+                            isProcessing = false;
+                        }, 1000);
+                    }, 2000);
+                }, 1000);
+            }, 500);
+        }
+
+        function setActiveStep(stepNumber) {
+            document.querySelectorAll('.step').forEach(step => step.classList.remove('active'));
+            document.getElementById(`step${stepNumber}`).classList.add('active');
+            currentStep = stepNumber;
+        }
+
+        function startProgressBar() {
+            const progressFill = document.getElementById('progressFill');
+            progressFill.style.width = '100%';
+        }
+
+        function showConversionDetails() {
+            const details = ['detail1', 'detail2', 'detail3', 'detail4'];
+            details.forEach((id, index) => {
+                setTimeout(() => {
+                    document.getElementById(id).classList.add('visible');
+                }, index * 500);
+            });
+        }
+
+        function showOutputFiles() {
+            const outputs = ['output1', 'output2', 'output3', 'output4'];
+            outputs.forEach((id, index) => {
+                setTimeout(() => {
+                    document.getElementById(id).classList.add('visible');
+                }, index * 200);
+            });
+        }
+
+        function resetAnimation() {
+            isProcessing = false;
+            currentStep = 0;
+
+            // Reset steps
+            document.querySelectorAll('.step').forEach(step => step.classList.remove('active'));
+            
+            // Reset data flows
+            document.querySelectorAll('.data-flow').forEach(flow => flow.classList.remove('active'));
+            
+            // Reset progress
+            document.getElementById('progressFill').style.width = '0%';
+            
+            // Reset details
+            document.querySelectorAll('.detail-item').forEach(item => item.classList.remove('visible'));
+            
+            // Reset outputs
+            document.querySelectorAll('.output-file').forEach(file => file.classList.remove('visible'));
+        }
+
+        function showPreview(type) {
+            const previews = {
+                cv: '📝 Custom CV Templates:\n• Industry-specific formatting\n• Skills highlighting\n• Achievement optimization\n• ATS-friendly versions',
+                cover: '💌 Cover Letter Generator:\n• Job-specific customization\n• Company research integration\n• Skill-requirement matching\n• Professional tone adaptation',
+                answers: '💬 Interview Answers:\n• Behavioral question responses\n• Technical skill demonstrations\n• Experience-based examples\n• Confidence-building scripts',
+                source: '🗃️ Source File Database:\n• Structured skill inventory\n• Experience timeline\n• Achievement metrics\n• Keyword optimization data'
+            };
+            
+            alert(previews[type]);
+        }
+
+        function showDemo() {
+            alert('🎯 Demo Features:\n\n• Upload any CV format\n• AI extracts skills, experience, achievements\n• Generates reusable source file\n• Creates custom outputs for different jobs\n• Maintains consistency across applications\n• Optimizes for ATS systems');
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            resetAnimation();
+        });
+    </script>
+</body>
+</html>
