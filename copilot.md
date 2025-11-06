@@ -47,7 +47,26 @@ When creating new animations for this project:
    - Make animations responsive and performant
    - Add clear comments explaining key concepts
    - **Text Guidelines**: Make text bigger and bold. When objects converge, attach text as children to the mesh so text moves with objects, not independently
-   - **Always Commit & Push**: After creating any animation, always commit and push to repository
+   - **🚨 CRITICAL: Always Commit & Push**: After creating ANY animation or making ANY changes, ALWAYS run `git push` to repository
+
+## 🔄 **MANDATORY GIT WORKFLOW**
+
+### **⚡ REMEMBER: `git push` > ALWAYS DO THIS**
+
+After ANY file creation, modification, or update:
+
+```bash
+# 1. Add changes
+git add .
+
+# 2. Commit with descriptive message  
+git commit -m "descriptive message about what was changed"
+
+# 3. 🚨 CRITICAL: ALWAYS PUSH
+git push
+```
+
+**❗ NEVER SKIP THE PUSH STEP** - This ensures all work is saved to the remote repository and available for deployment.
 
 ## Recent Additions
 

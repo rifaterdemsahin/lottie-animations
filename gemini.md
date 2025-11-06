@@ -7,7 +7,16 @@
 4. Provide a prompt container describing the animation and detailed generation steps.
 5. Maintain performance with responsive lighting, controls, and resize handling.
 6. Attach text to moving meshes whenever elements converge or travel together.
-7. Finalize each animation cycle with commits and pushes so the gallery stays current.
+7. **🚨 CRITICAL: Always run `git push`** - Finalize each animation cycle with commits and pushes so the gallery stays current.
+
+## 🔄 **MANDATORY: `git push` > ALWAYS DO THIS**
+
+After creating or modifying ANY animation:
+```bash
+git add .
+git commit -m "descriptive message"
+git push  # 🚨 NEVER SKIP THIS STEP
+```
 
 ## Animation Checklist
 - **Scene Setup**: Scene, camera, renderer, and background colors match project look.
