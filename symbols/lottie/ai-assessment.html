@@ -174,68 +174,50 @@
         </div>
     </div>
 
-    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.10.5/lottie.min.js"></script>
     <script>
         // Load the animation from external JSON file
-        let animation;
-        fetch('ai-assessment.json')
-            .then(response => response.json())
-            .then(animationData => {
-                // Use unpkg version of lottie-web
-                const script = document.createElement('script');
-                script.src = 'https://unpkg.com/lottie-web@5.12.2/build/player/lottie.min.js';
-                script.onload = () => {
-                    animation = lottie.loadAnimation({
-                        container: document.getElementById('lottie-container'),
-                        renderer: 'svg',
-                        loop: true,
-                        autoplay: true,
-                        animationData: animationData
-                    });
-                    
-                    // Log animation info
-                    animation.addEventListener('DOMLoaded', () => {
-                        console.log('Animation loaded successfully!');
-                        console.log('Total frames:', animation.totalFrames);
-                        console.log('Frame rate:', animation.frameRate);
-                        console.log('Duration:', animation.totalFrames / animation.frameRate, 'seconds');
-                    });
-                    
-                    setupControls();
-                };
-                document.head.appendChild(script);
-            })
-            .catch(error => console.error('Error loading animation:', error));
+        const animation = lottie.loadAnimation({
+            container: document.getElementById('lottie-container'),
+            renderer: 'svg',
+            loop: true,
+            autoplay: true,
+            path: 'ai-assessment.json'
+        });
         
-        function setupControls() {
-            // Control buttons
-            document.getElementById('play-btn').addEventListener('click', () => {
-                if (animation) animation.play();
-            });
-            
-            document.getElementById('pause-btn').addEventListener('click', () => {
-                if (animation) animation.pause();
-            });
-            
-            document.getElementById('reset-btn').addEventListener('click', () => {
-                if (animation) {
-                    animation.stop();
-                    animation.play();
-                }
-            });
-            
-            document.getElementById('slow-btn').addEventListener('click', () => {
-                if (animation) animation.setSpeed(0.5);
-            });
-            
-            document.getElementById('normal-btn').addEventListener('click', () => {
-                if (animation) animation.setSpeed(1);
-            });
-            
-            document.getElementById('fast-btn').addEventListener('click', () => {
-                if (animation) animation.setSpeed(2);
-            });
-        }
+        // Control buttons
+        document.getElementById('play-btn').addEventListener('click', () => {
+            animation.play();
+        });
+        
+        document.getElementById('pause-btn').addEventListener('click', () => {
+            animation.pause();
+        });
+        
+        document.getElementById('reset-btn').addEventListener('click', () => {
+            animation.stop();
+            animation.play();
+        });
+        
+        document.getElementById('slow-btn').addEventListener('click', () => {
+            animation.setSpeed(0.5);
+        });
+        
+        document.getElementById('normal-btn').addEventListener('click', () => {
+            animation.setSpeed(1);
+        });
+        
+        document.getElementById('fast-btn').addEventListener('click', () => {
+            animation.setSpeed(2);
+        });
+        
+        // Log animation info
+        animation.addEventListener('DOMLoaded', () => {
+            console.log('Animation loaded successfully!');
+            console.log('Total frames:', animation.totalFrames);
+            console.log('Frame rate:', animation.frameRate);
+            console.log('Duration:', animation.totalFrames / animation.frameRate, 'seconds');
+        });
     </script>
 </body>
 </html>
