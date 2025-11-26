@@ -368,6 +368,17 @@
         const resultsSection = document.getElementById('resultsSection');
         const progressFill = document.getElementById('progressFill');
 
+        // Constants
+        const AI_RESPONSE_DELAY = 2000;
+
+        // AI Coaching responses for each cognitive style
+        const COACHING_RESPONSES = {
+            solution: 'Excellent! As a solution-oriented thinker, I recommend leveraging your natural adaptability. Try techniques like rapid prototyping and iterative development. Focus on celebrating small wins to maintain momentum. Consider pairing with detail-oriented team members to ensure nothing is overlooked.',
+            problem: 'Great insight! Your analytical approach is valuable for preventing issues. I suggest balancing deep analysis with action timelines to avoid analysis paralysis. Use frameworks like "5 Whys" to structure your investigations. Your thoroughness makes you perfect for quality assurance and risk management roles.',
+            emotional: 'Wonderful! Your emotional intelligence is a leadership superpower. Continue developing your empathy through active listening and perspective-taking exercises. Document your intuitive insights to validate them over time. Consider roles in coaching, change management, or team building where your skills shine.',
+            rational: 'Perfect! Your logical approach drives efficiency. Enhance this with decision matrices and cost-benefit analysis tools. Remember to occasionally validate assumptions with stakeholders. Your strategic thinking makes you ideal for planning, operations, and analytical roles.'
+        };
+
         const styleData = {
             solution: {
                 icon: '🌊',
@@ -447,19 +458,12 @@
                 console.log('Assessment Results sent to AI Coach:', assessmentData);
 
                 // Simulate AI response delay
-                await new Promise(resolve => setTimeout(resolve, 2000));
+                await new Promise(resolve => setTimeout(resolve, AI_RESPONSE_DELAY));
 
                 // Generate personalized AI coaching response
-                const coachingResponses = {
-                    solution: 'Excellent! As a solution-oriented thinker, I recommend leveraging your natural adaptability. Try techniques like rapid prototyping and iterative development. Focus on celebrating small wins to maintain momentum. Consider pairing with detail-oriented team members to ensure nothing is overlooked.',
-                    problem: 'Great insight! Your analytical approach is valuable for preventing issues. I suggest balancing deep analysis with action timelines to avoid analysis paralysis. Use frameworks like "5 Whys" to structure your investigations. Your thoroughness makes you perfect for quality assurance and risk management roles.',
-                    emotional: 'Wonderful! Your emotional intelligence is a leadership superpower. Continue developing your empathy through active listening and perspective-taking exercises. Document your intuitive insights to validate them over time. Consider roles in coaching, change management, or team building where your skills shine.',
-                    rational: 'Perfect! Your logical approach drives efficiency. Enhance this with decision matrices and cost-benefit analysis tools. Remember to occasionally validate assumptions with stakeholders. Your strategic thinking makes you ideal for planning, operations, and analytical roles.'
-                };
-
                 aiCoachResponse.innerHTML = `
                     <p><strong>Personalized Coaching for ${data.title}:</strong></p>
-                    <p>${coachingResponses[style]}</p>
+                    <p>${COACHING_RESPONSES[style]}</p>
                     <hr style="margin: 20px 0; border: none; border-top: 1px solid rgba(255,255,255,0.3);">
                     <p style="font-size: 0.9em; opacity: 0.8;">
                         <strong>Next Steps:</strong><br>
