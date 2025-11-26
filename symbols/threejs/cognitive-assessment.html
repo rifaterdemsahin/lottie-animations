@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cognitive Style Assessment</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 90%;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 40px;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 20px 80px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .subtitle {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .canvas-container {
+            width: 100%;
+            height: 400px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .assessment-section {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+
+        .question {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .option {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid transparent;
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .option:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .option.selected {
+            border-color: #fff;
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        .option-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .option-icon {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        .option-desc {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            color: white;
+            padding: 15px 40px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            display: block;
+            margin: 20px auto;
+        }
+
+        .btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .results {
+            display: none;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .results.visible {
+            display: block;
+        }
+
+        .result-icon {
+            font-size: 5em;
+            margin-bottom: 20px;
+        }
+
+        .result-title {
+            font-size: 2em;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .result-description {
+            font-size: 1.1em;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .ai-coach-section {
+            background: linear-gradient(135deg, rgba(76, 201, 240, 0.3), rgba(67, 233, 123, 0.3));
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+
+        .ai-coach-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .ai-coach-icon {
+            font-size: 3em;
+        }
+
+        .ai-coach-title {
+            font-size: 1.5em;
+            font-weight: 700;
+        }
+
+        .ai-coach-response {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            min-height: 150px;
+            font-size: 1em;
+            line-height: 1.6;
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .loading-dot {
+            width: 10px;
+            height: 10px;
+            background: white;
+            border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+
+        .loading-dot:nth-child(1) { animation-delay: -0.32s; }
+        .loading-dot:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1.0); }
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            margin: 30px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4ecdc4, #44a08d);
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧠 Cognitive Style Assessment</h1>
+        <p class="subtitle">Discover your thinking style and receive personalized AI coaching</p>
+
+        <div class="canvas-container">
+            <canvas id="visualization"></canvas>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <div class="assessment-section" id="assessmentSection">
+            <div class="question">How do you typically approach challenges?</div>
+            <div class="options">
+                <div class="option" data-style="solution">
+                    <div class="option-icon">🌊</div>
+                    <div class="option-title">Solution-Oriented</div>
+                    <div class="option-desc">I focus on finding solutions and move forward with a flowing approach</div>
+                </div>
+                <div class="option" data-style="problem">
+                    <div class="option-icon">🔄</div>
+                    <div class="option-title">Problem-Oriented</div>
+                    <div class="option-desc">I analyze the problem thoroughly, circling around it to understand all aspects</div>
+                </div>
+                <div class="option" data-style="emotional">
+                    <div class="option-icon">⭐</div>
+                    <div class="option-title">Emotional</div>
+                    <div class="option-desc">I trust my feelings and intuition, letting emotions guide my decisions</div>
+                </div>
+                <div class="option" data-style="rational">
+                    <div class="option-icon">➡️</div>
+                    <div class="option-title">Rational</div>
+                    <div class="option-desc">I follow logic and reason, taking a direct path from A to B</div>
+                </div>
+            </div>
+            <button class="btn" id="submitBtn" disabled>Submit Assessment</button>
+        </div>
+
+        <div class="results" id="resultsSection">
+            <div class="result-icon" id="resultIcon"></div>
+            <div class="result-title" id="resultTitle"></div>
+            <div class="result-description" id="resultDescription"></div>
+
+            <div class="ai-coach-section">
+                <div class="ai-coach-header">
+                    <div class="ai-coach-icon">🤖</div>
+                    <div class="ai-coach-title">AI Coach Insights</div>
+                </div>
+                <div class="ai-coach-response" id="aiCoachResponse">
+                    <div class="loading">
+                        <div class="loading-dot"></div>
+                        <div class="loading-dot"></div>
+                        <div class="loading-dot"></div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn" onclick="location.reload()">Take Assessment Again</button>
+        </div>
+    </div>
+
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+        }
+    }
+    </script>
+    <script type="module">
+        import * as THREE from 'three';
+
+        // Simple Three.js visualization
+        const canvas = document.getElementById('visualization');
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x05050b);
+
+        const camera = new THREE.PerspectiveCamera(60, canvas.parentElement.offsetWidth / 400, 0.1, 100);
+        camera.position.z = 15;
+
+        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+        renderer.setSize(canvas.parentElement.offsetWidth, 400);
+        renderer.setPixelRatio(window.devicePixelRatio);
+
+        // Add simple rotating particles
+        const particles = new THREE.Group();
+        const particleGeometry = new THREE.SphereGeometry(0.1, 8, 8);
+        const materials = [
+            new THREE.MeshBasicMaterial({ color: 0x5bc0f8 }),
+            new THREE.MeshBasicMaterial({ color: 0xff9f1c }),
+            new THREE.MeshBasicMaterial({ color: 0xff477e }),
+            new THREE.MeshBasicMaterial({ color: 0x8ecae6 })
+        ];
+
+        for (let i = 0; i < 50; i++) {
+            const particle = new THREE.Mesh(particleGeometry, materials[i % 4]);
+            particle.position.set(
+                (Math.random() - 0.5) * 20,
+                (Math.random() - 0.5) * 10,
+                (Math.random() - 0.5) * 10
+            );
+            particles.add(particle);
+        }
+        scene.add(particles);
+
+        function animate() {
+            requestAnimationFrame(animate);
+            particles.rotation.y += 0.002;
+            particles.rotation.x += 0.001;
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            const width = canvas.parentElement.offsetWidth;
+            camera.aspect = width / 400;
+            camera.updateProjectionMatrix();
+            renderer.setSize(width, 400);
+        });
+    </script>
+
+    <script>
+        // Assessment logic
+        let selectedStyle = null;
+        const options = document.querySelectorAll('.option');
+        const submitBtn = document.getElementById('submitBtn');
+        const assessmentSection = document.getElementById('assessmentSection');
+        const resultsSection = document.getElementById('resultsSection');
+        const progressFill = document.getElementById('progressFill');
+
+        // Constants
+        const AI_RESPONSE_DELAY = 2000;
+
+        // AI Coaching responses for each cognitive style
+        const COACHING_RESPONSES = {
+            solution: 'Excellent! As a solution-oriented thinker, I recommend leveraging your natural adaptability. Try techniques like rapid prototyping and iterative development. Focus on celebrating small wins to maintain momentum. Consider pairing with detail-oriented team members to ensure nothing is overlooked.',
+            problem: 'Great insight! Your analytical approach is valuable for preventing issues. I suggest balancing deep analysis with action timelines to avoid analysis paralysis. Use frameworks like "5 Whys" to structure your investigations. Your thoroughness makes you perfect for quality assurance and risk management roles.',
+            emotional: 'Wonderful! Your emotional intelligence is a leadership superpower. Continue developing your empathy through active listening and perspective-taking exercises. Document your intuitive insights to validate them over time. Consider roles in coaching, change management, or team building where your skills shine.',
+            rational: 'Perfect! Your logical approach drives efficiency. Enhance this with decision matrices and cost-benefit analysis tools. Remember to occasionally validate assumptions with stakeholders. Your strategic thinking makes you ideal for planning, operations, and analytical roles.'
+        };
+
+        const styleData = {
+            solution: {
+                icon: '🌊',
+                title: 'Solution-Oriented Thinker',
+                description: 'You naturally flow toward solutions, adapting and finding creative paths forward. Your strength lies in forward momentum and innovative problem-solving.',
+                coachingPrompt: 'solution-oriented cognitive style with focus on forward momentum and creative problem-solving'
+            },
+            problem: {
+                icon: '🔄',
+                title: 'Problem-Oriented Analyst',
+                description: 'You excel at thorough analysis, circling around challenges to understand them deeply. Your strength is in identifying root causes and preventing issues.',
+                coachingPrompt: 'problem-oriented cognitive style with focus on deep analysis and root cause identification'
+            },
+            emotional: {
+                icon: '⭐',
+                title: 'Emotional Intelligence Leader',
+                description: 'You trust your intuition and emotional awareness, making decisions with empathy and insight. Your strength is in human connection and authentic leadership.',
+                coachingPrompt: 'emotional cognitive style with focus on intuition, empathy, and human connection'
+            },
+            rational: {
+                icon: '➡️',
+                title: 'Rational Strategist',
+                description: 'You follow logic and reason with precision, taking direct paths to objectives. Your strength is in clear thinking and efficient decision-making.',
+                coachingPrompt: 'rational cognitive style with focus on logic, efficiency, and strategic thinking'
+            }
+        };
+
+        options.forEach(option => {
+            option.addEventListener('click', () => {
+                options.forEach(opt => opt.classList.remove('selected'));
+                option.classList.add('selected');
+                selectedStyle = option.dataset.style;
+                submitBtn.disabled = false;
+            });
+        });
+
+        submitBtn.addEventListener('click', async () => {
+            if (!selectedStyle) return;
+
+            // Update progress
+            progressFill.style.width = '50%';
+
+            // Hide assessment, show results
+            assessmentSection.style.display = 'none';
+            resultsSection.classList.add('visible');
+
+            // Update progress
+            progressFill.style.width = '75%';
+
+            // Display results
+            const data = styleData[selectedStyle];
+            document.getElementById('resultIcon').textContent = data.icon;
+            document.getElementById('resultTitle').textContent = data.title;
+            document.getElementById('resultDescription').textContent = data.description;
+
+            // Send to AI Coach
+            await sendToAICoach(selectedStyle, data);
+
+            // Complete progress
+            progressFill.style.width = '100%';
+        });
+
+        async function sendToAICoach(style, data) {
+            const aiCoachResponse = document.getElementById('aiCoachResponse');
+            
+            try {
+                // Simulate sending assessment results to AI Coach
+                // In a real implementation, this would call an actual API
+                const assessmentData = {
+                    timestamp: new Date().toISOString(),
+                    cognitiveStyle: style,
+                    styleTitle: data.title,
+                    userPreferences: data.coachingPrompt
+                };
+
+                // Log the data that would be sent to AI coach
+                console.log('Assessment Results sent to AI Coach:', assessmentData);
+
+                // Simulate AI response delay
+                await new Promise(resolve => setTimeout(resolve, AI_RESPONSE_DELAY));
+
+                // Generate personalized AI coaching response
+                aiCoachResponse.innerHTML = `
+                    <p><strong>Personalized Coaching for ${data.title}:</strong></p>
+                    <p>${COACHING_RESPONSES[style]}</p>
+                    <hr style="margin: 20px 0; border: none; border-top: 1px solid rgba(255,255,255,0.3);">
+                    <p style="font-size: 0.9em; opacity: 0.8;">
+                        <strong>Next Steps:</strong><br>
+                        1. Practice self-awareness in your decision-making<br>
+                        2. Seek feedback from others with different styles<br>
+                        3. Explore complementary thinking approaches<br>
+                        4. Join our AI coaching program for deeper insights
+                    </p>
+                `;
+
+                // In a real implementation, you might also want to store this data
+                localStorage.setItem('cognitiveAssessment', JSON.stringify(assessmentData));
+
+            } catch (error) {
+                console.error('Error sending to AI Coach:', error);
+                aiCoachResponse.innerHTML = `
+                    <p><strong>AI Coach Response:</strong></p>
+                    <p>Your assessment has been recorded successfully! Based on your ${data.title} style, 
+                    you excel at ${style === 'solution' ? 'finding creative paths forward' : 
+                                   style === 'problem' ? 'thorough analysis' : 
+                                   style === 'emotional' ? 'connecting with others' : 
+                                   'logical strategic thinking'}.</p>
+                    <p>Continue developing your natural strengths while exploring complementary thinking styles!</p>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>
