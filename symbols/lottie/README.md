@@ -73,13 +73,13 @@ These properties can be either static (`"a": 0`) or animated (`"a": 1`) with key
   <button id="pause-btn">Pause</button>
   <button id="reset-btn">Reset</button>
 </div>
+
+<!-- Load Lottie library from CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.10.5/lottie.min.js"></script>
 ```
 
 #### JavaScript Integration
 ```javascript
-// Load Lottie library from CDN
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.10.5/lottie.min.js"></script>
-
 // Initialize animation
 const animation = lottie.loadAnimation({
   container: document.getElementById('lottie-container'),
@@ -109,7 +109,7 @@ The animation uses modern CSS features:
 ```
 symbols/lottie/
 ├── ai-vs-freelancer.html   # Main HTML file with embedded animation
-├── ai-vs-freelancer.json   # Standalone JSON animation data (React format)
+├── ai-vs-freelancer.json   # React component wrapper with Lottie JSON data
 └── README.md               # This documentation file
 ```
 
@@ -166,7 +166,7 @@ The animation works on all modern browsers:
 
 ## Performance Considerations
 
-- **File Size**: JSON format is ~26KB (significantly smaller than equivalent GIF or video)
+- **File Size**: The HTML file is 20KB and the React component is 26KB (significantly smaller than equivalent GIF or video which could be 500KB-2MB+)
 - **Rendering**: SVG renderer provides optimal quality at any scale
 - **CPU Usage**: Minimal impact on performance
 - **Mobile**: Works smoothly on mobile devices with hardware acceleration
